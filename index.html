@@ -7,26 +7,123 @@
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="icon" type="image/png" href="img/logo.png" />
-    
-    <!-- Sets the basepath for the library if not in same directory -->
-    <script type="text/javascript">
-		mxBasePath = 'lib/src';
-    </script>
-    
-    <!-- Loads and initializes the library -->
-    <script type="text/javascript" src="lib/src/js/mxClient.js"></script>
-    
-    <!-- Loads our Mindmap library -->
-    <script type="text/javascript" src="js/graph.js"></script>
-    
-    <title>MindMap</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="icon" type="image/png" href="img/logo.png" />
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+
+  <!-- Sets the basepath for the library if not in same directory -->
+  <script type="text/javascript">
+    mxBasePath = 'lib/src';
+  </script>
+
+  <!-- Loads and initializes the library -->
+  <script type="text/javascript" src="lib/src/js/mxClient.js"></script>
+
+  <!-- Loads our Mindmap library -->
+  <script type="text/javascript" src="js/graph.js"></script>
+
+  <title>MindMap</title>
 </head>
+
 <body>
-    
+  <nav class="navbar navbar-dark bg-dark flex-md-nowrap p-0 shadow">
+    <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">Progetto Semestre</a>
+  </nav>
+
+  <div class="container-fluid">
+    <div class="row">
+      <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+        <div class="sidebar-sticky">
+          <ul class="nav flex-column">
+            <li class="nav-item">
+              <a class="nav-link active" href="#">
+                <span data-feather="home"></span>
+                Dashboard <span class="sr-only">(current)</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <span data-feather="file"></span>
+                Orders
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <span data-feather="shopping-cart"></span>
+                Products
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <span data-feather="users"></span>
+                Customers
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <span data-feather="bar-chart-2"></span>
+                Reports
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <span data-feather="layers"></span>
+                Integrations
+              </a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+        <div
+          class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+          <h1 class="h2">MindMap</h1>
+          <div class="btn-toolbar mb-2 mb-md-0">
+            <div class="btn-group mr-2">
+              <button type="button" class="btn btn-sm btn-outline-secondary">Save</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas> -->
+
+
+        <div class="geBackgroundPage"
+          style="position: absolute; border: 1px solid rgb(0, 0, 0); overflow: hidden; left: 14px; top: 80px; width: 1500px; height: 700px; background-color: rgb(255, 255, 255); 
+          background-image: url(&quot;data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAwIDEwIEwgNDAgMTAgTSAxMCAwIEwgMTAgNDAgTSAwIDIwIEwgNDAgMjAgTSAyMCAwIEwgMjAgNDAgTSAwIDMwIEwgNDAgMzAgTSAzMCAwIEwgMzAgNDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2UwZTBlMCIgb3BhY2l0eT0iMC4yIiBzdHJva2Utd2lkdGg9IjEiLz48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZTBlMGUwIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=&quot;); background-position: -1px -1px;">
+        </div>
+
+        
+
+      </main>
+    </div>
+  </div>
+  <div
+          style="background-color: rgb(220, 220, 220); position: absolute; white-space: nowrap; overflow: hidden; height: 30px; left: 216px; bottom: 0px; right: 240px;">
+          <div
+            style="position: relative; display: inline-block; vertical-align: top; height: 30px; white-space: nowrap; overflow: hidden; font-size: 12px; margin-left: 30px;">
+            <div title="Page-1 (k8oaIBevAUwSV2_9oCbF)" class="geActivePage" draggable="true"
+              style="display: inline-block; white-space: nowrap; box-sizing: border-box; position: relative; overflow: hidden; margin-left: -1px; height: 30px; padding: 8px 4px; border-width: 1px; border-style: none solid solid; border-color: rgb(192, 192, 192); background-color: rgb(238, 238, 238); cursor: move; color: gray; max-width: 140px; width: 140px; text-overflow: ellipsis; font-weight: bold;">
+              Page-1</div>
+          </div>
+          <div title="Pages"
+            style="display: inline-block; white-space: nowrap; box-sizing: border-box; position: absolute; overflow: hidden; margin-left: -1px; height: 30px; padding: 3px 4px 8px; border: 1px solid rgb(192, 192, 192); background-color: rgb(220, 220, 220); cursor: pointer; color: gray; width: 30px; line-height: 30px; top: 0px; left: 1px;">
+            <div class="geSprite geSprite-dots" style="display: inline-block; width: 21px; height: 21px; opacity: 0.4;">
+            </div>
+          </div>
+          <div title="Insert Page"
+            style="display: inline-block; white-space: nowrap; box-sizing: border-box; position: relative; overflow: hidden; margin-left: -1px; height: 30px; padding: 4px 4px 8px; border: 1px solid rgb(192, 192, 192); background-color: rgb(220, 220, 220); cursor: pointer; color: gray; width: 30px; line-height: 30px;">
+            <div class="geSprite geSprite-plus" style="display: inline-block; width: 21px; height: 21px; opacity: 0.4;">
+            </div>
+          </div>
+        </div>
 </body>
 </html>
