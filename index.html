@@ -28,6 +28,7 @@
 
   <!-- Loads our Mindmap library -->
   <script type="text/javascript" src="js/graph.js"></script>
+  <script type="text/javascript" src="js/sideLeftBarFunction.js"></script>
 
   <title>MindMap</title>
 </head>
@@ -42,25 +43,25 @@
       <nav class="col-md-2 d-none d-md-block bg-light sidebar">
         <div class="sidebar-sticky">
           <ul class="nav flex-column">
-            <li class="nav-item">
+            <li class="nav-item" onclick="zoomIn();">
               <a class="nav-link active" href="#">
                 <span data-feather="home"></span>
-                Dashboard <span class="sr-only">(current)</span>
+                Zoom In <span class="sr-only">(current)</span>
               </a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" onclick="zoomOut();">
               <a class="nav-link" href="#">
                 <span data-feather="file"></span>
-                Orders
+                Zoom Out
               </a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" onclick="print();">
               <a class="nav-link" href="#">
                 <span data-feather="shopping-cart"></span>
-                Products
+                Print
               </a>
             </li>
-            <li class="nav-item">
+            <!-- <li class="nav-item">
               <a class="nav-link" href="#">
                 <span data-feather="users"></span>
                 Customers
@@ -77,7 +78,7 @@
                 <span data-feather="layers"></span>
                 Integrations
               </a>
-            </li>
+            </li> -->
           </ul>
         </div>
       </nav>
@@ -88,7 +89,7 @@
           <h1 class="h2">MindMap</h1>
           <div class="btn-toolbar mb-2 mb-md-0">
             <div class="btn-group mr-2">
-              <button type="button" class="btn btn-sm btn-outline-secondary">Save</button>
+              <button type="button" class="btn btn-sm btn-outline-secondary" onclick="save();">Save</button>
             </div>
           </div>
         </div>
@@ -101,29 +102,30 @@
           background-image: url(&quot;data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAwIDEwIEwgNDAgMTAgTSAxMCAwIEwgMTAgNDAgTSAwIDIwIEwgNDAgMjAgTSAyMCAwIEwgMjAgNDAgTSAwIDMwIEwgNDAgMzAgTSAzMCAwIEwgMzAgNDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2UwZTBlMCIgb3BhY2l0eT0iMC4yIiBzdHJva2Utd2lkdGg9IjEiLz48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZTBlMGUwIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=&quot;); background-position: -1px -1px;">
         </div>
 
-        
+
 
       </main>
     </div>
   </div>
   <div
-          style="background-color: rgb(220, 220, 220); position: absolute; white-space: nowrap; overflow: hidden; height: 30px; left: 216px; bottom: 0px; right: 240px;">
-          <div
-            style="position: relative; display: inline-block; vertical-align: top; height: 30px; white-space: nowrap; overflow: hidden; font-size: 12px; margin-left: 30px;">
-            <div title="Page-1 (k8oaIBevAUwSV2_9oCbF)" class="geActivePage" draggable="true"
-              style="display: inline-block; white-space: nowrap; box-sizing: border-box; position: relative; overflow: hidden; margin-left: -1px; height: 30px; padding: 8px 4px; border-width: 1px; border-style: none solid solid; border-color: rgb(192, 192, 192); background-color: rgb(238, 238, 238); cursor: move; color: gray; max-width: 140px; width: 140px; text-overflow: ellipsis; font-weight: bold;">
-              Page-1</div>
-          </div>
-          <div title="Pages"
-            style="display: inline-block; white-space: nowrap; box-sizing: border-box; position: absolute; overflow: hidden; margin-left: -1px; height: 30px; padding: 3px 4px 8px; border: 1px solid rgb(192, 192, 192); background-color: rgb(220, 220, 220); cursor: pointer; color: gray; width: 30px; line-height: 30px; top: 0px; left: 1px;">
-            <div class="geSprite geSprite-dots" style="display: inline-block; width: 21px; height: 21px; opacity: 0.4;">
-            </div>
-          </div>
-          <div title="Insert Page"
-            style="display: inline-block; white-space: nowrap; box-sizing: border-box; position: relative; overflow: hidden; margin-left: -1px; height: 30px; padding: 4px 4px 8px; border: 1px solid rgb(192, 192, 192); background-color: rgb(220, 220, 220); cursor: pointer; color: gray; width: 30px; line-height: 30px;">
-            <div class="geSprite geSprite-plus" style="display: inline-block; width: 21px; height: 21px; opacity: 0.4;">
-            </div>
-          </div>
-        </div>
+    style="background-color: rgb(220, 220, 220); position: absolute; white-space: nowrap; overflow: hidden; height: 30px; left: 0px; bottom: 0px; right: 0px;">
+    <div
+      style="position: relative; display: inline-block; vertical-align: top; height: 30px; white-space: nowrap; overflow: hidden; font-size: 12px; margin-left: 30px;">
+      <div title="Page-1 (k8oaIBevAUwSV2_9oCbF)" class="geActivePage" draggable="true"
+        style="display: inline-block; white-space: nowrap; box-sizing: border-box; position: relative; overflow: hidden; margin-left: -1px; height: 30px; padding: 8px 4px; border-width: 1px; border-style: none solid solid; border-color: rgb(192, 192, 192); background-color: rgb(238, 238, 238); cursor: move; color: gray; max-width: 140px; width: 140px; text-overflow: ellipsis; font-weight: bold;">
+        Page-1</div>
+    </div>
+    <div title="Pages"
+      style="display: inline-block; white-space: nowrap; box-sizing: border-box; position: absolute; overflow: hidden; margin-left: -1px; height: 30px; padding: 3px 4px 8px; border: 1px solid rgb(192, 192, 192); background-color: rgb(220, 220, 220); cursor: pointer; color: gray; width: 30px; line-height: 30px; top: 0px; left: 1px;">
+      <div class="geSprite geSprite-dots" style="display: inline-block; width: 21px; height: 21px; opacity: 0.4;">
+      </div>
+    </div>
+    <div title="Insert Page"
+      style="display: inline-block; white-space: nowrap; box-sizing: border-box; position: relative; overflow: hidden; margin-left: -1px; height: 30px; padding: 4px 4px 8px; border: 1px solid rgb(192, 192, 192); background-color: rgb(220, 220, 220); cursor: pointer; color: gray; width: 30px; line-height: 30px;">
+      <div class="geSprite geSprite-plus" style="display: inline-block; width: 21px; height: 21px; opacity: 0.4;">
+      </div>
+    </div>
+  </div>
 </body>
+
 </html>
