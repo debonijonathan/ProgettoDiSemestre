@@ -17,6 +17,17 @@ function main() {
         var style = graph.getStylesheet().getDefaultVertexStyle();
         setStyle(style);
 
+        // Impostazione dello stile di default dei collegamenti ai nodi
+        var edgeStyle = graph.getStylesheet().getDefaultEdgeStyle();
+        setEdgeStyle(edgeStyle);
+
+        //setAutoCreate(graph);
+
+        //Impostiamo la scala minima a 1
+        graph.cellRenderer.getTextScale = function(state)
+        {
+            return Math.min(1, state.view.scale);
+        };
 
         //Il nodo parent
         var parent = graph.getDefaultParent();
@@ -31,7 +42,7 @@ function main() {
             //inseriemento del nodo root nel grafico
             graph.updateCellSize(root);
             //pulsante aggiungi nodo
-            addFuntionButton(graph, root, true);
+            addFuntionButton(graph, root, false);
         }
         finally {
             // Aggiornamento del modello
@@ -41,6 +52,33 @@ function main() {
     }
 }
 
+/*function setAutoCreate(graph){
+    // Enables automatic layout on the graph and installs
+    // a tree layout for all groups who's children are
+    // being changed, added or removed.
+    var layout = new mxCompactTreeLayout(graph, false);
+    layout.useBoundingBox = false;
+    layout.edgeRouting = false;
+    layout.levelDistance = 60;
+    layout.nodeDistance = 16;
+
+    // Allows the layout to move cells even though cells
+    // aren't movable in the graph
+    layout.isVertexMovable = function(cell)
+    {
+        return true;
+    };
+
+    var layoutMgr = new mxLayoutManager(graph);
+
+    layoutMgr.getLayout = function(cell)
+    {
+        if (cell.getChildCount() > 0)
+        {
+            return layout;
+        }
+	};
+}*/
 function setStyle(style) {
     //Rettangolo per definire un nodo
     style[mxConstants.STYLE_SHAPE] = 'label';
@@ -50,7 +88,7 @@ function setStyle(style) {
     //Il nostro testo verrà allineato a sinistra (in orizzontale)
     style[mxConstants.STYLE_ALIGN] = mxConstants.ALIGN_LEFT;
     //dove inizia l'allineamento a sinitra (tenere in considerazione l'immagine)
-    style[mxConstants.STYLE_SPACING_LEFT] = 75;
+    style[mxConstants.STYLE_SPACING_LEFT] = 50;
 
     style[mxConstants.STYLE_GRADIENTCOLOR] = '#ffd700';
     style[mxConstants.STYLE_STROKECOLOR] = '#db1818';
@@ -76,6 +114,11 @@ function setStyle(style) {
     style[mxConstants.STYLE_IMAGE_HEIGHT] = '30';
 }
 
+function setEdgeStyle(style){
+    style[mxConstants.STYLE_STROKEWIDTH] = 3;
+    style[mxConstants.STYLE_STROKECOLOR] = '#000000';
+}
+
 function addFuntionButton(graph, cell, flagDelete) {
     var addOverlay = new mxCellOverlay(new mxImage('img/add.png', 20, 20), 'Add');
     addOverlay.cursor = 'hand';
@@ -84,7 +127,6 @@ function addFuntionButton(graph, cell, flagDelete) {
     graph.addCellOverlay(cell, addOverlay);
     addOverlay.addListener(mxEvent.CLICK, mxUtils.bind(this, function (sender, evt) {
         addNode(graph, cell);
-        alert("ciao berra!")
     }));
 
     if (flagDelete) {
@@ -101,7 +143,27 @@ function addFuntionButton(graph, cell, flagDelete) {
 }
 
 function addNode(graph, cell) {
+	var model = graph.getModel();
+    var parent = graph.getDefaultParent();
 
+    model.beginUpdate();
+	try
+	{   
+        var w = graph.container.offsetWidth;
+        //inserimento del nodo nella posizione corretta
+        var vertex = graph.insertVertex(parent, null, 'TITLE', w / 2 + 10, 90, 5, 5, 'image=img/cloud.png');
+        //inseriemento del nodo vertex nel grafico
+        graph.updateCellSize(vertex);
+        //Inseriamo il collegamento tra il nodo parent e il nodo vertice
+        graph.insertEdge(parent, null, '', cell, vertex);
+
+        //pulsante aggiungi nodo
+        addFuntionButton(graph, vertex, true);
+	}
+	finally
+	{
+		model.endUpdate();
+	}
 }
 
 function deleteNode(graph, cell) {
