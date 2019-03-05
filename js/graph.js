@@ -1,4 +1,4 @@
-function main() {
+function main(container) {
     // Checks if browser is supported
     if (!mxClient.isBrowserSupported()) {
         // Displays an error message if the browser is
@@ -6,11 +6,14 @@ function main() {
         mxUtils.error('Browser is not supported!', 200, false);
     }
     else {
-        var container = document.createElement('div');
+        //var container = document.createElement('div');
         document.body.appendChild(container);
 
         // Creazione del grafo all'interno del contenitore
         var graph = new mxGraph(container);
+       
+
+
 
 
         // Impostazione dello stile di default dei nodi
@@ -47,8 +50,23 @@ function main() {
         finally {
             // Aggiornamento del modello
             graph.getModel().endUpdate();
-        }
+         }
 
+         document.getElementById("zoomIn").onclick = function(){
+             graph.zoomIn();
+         }
+
+         document.getElementById("zoomOut").onclick = function(){
+             graph.zoomOut();
+         }
+
+         document.getElementById("zoomActual").onclick = function(){
+             graph.zoomActual();
+         }
+
+         document.getElementById("print").onclick = function(){
+             rint();
+         }
     }
 }
 
