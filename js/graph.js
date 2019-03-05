@@ -11,7 +11,7 @@ function main(container) {
 
         // Creazione del grafo all'interno del contenitore
         var graph = new mxGraph(container);
-       
+
 
 
 
@@ -27,8 +27,7 @@ function main(container) {
         //setAutoCreate(graph);
 
         //Impostiamo la scala minima a 1
-        graph.cellRenderer.getTextScale = function(state)
-        {
+        graph.cellRenderer.getTextScale = function (state) {
             return Math.min(1, state.view.scale);
         };
 
@@ -50,23 +49,49 @@ function main(container) {
         finally {
             // Aggiornamento del modello
             graph.getModel().endUpdate();
-         }
+        }
 
-         document.getElementById("zoomIn").onclick = function(){
-             graph.zoomIn();
-         }
+        document.getElementById("zoomIn").onclick = function () {
+            graph.zoomIn();
+        }
 
-         document.getElementById("zoomOut").onclick = function(){
-             graph.zoomOut();
-         }
+        document.getElementById("zoomOut").onclick = function () {
+            graph.zoomOut();
+        }
 
-         document.getElementById("zoomActual").onclick = function(){
-             graph.zoomActual();
-         }
+        document.getElementById("zoomActual").onclick = function () {
+            graph.zoomActual();
+        }
 
-         document.getElementById("print").onclick = function(){
-             rint();
-         }
+        document.getElementById("print").onclick = function () {
+            print();
+        }
+
+        var undoManager = new mxUndoManager();
+        var listener = function (sender, evt) {
+            undoManager.undoableEditHappened(evt.getProperty('edit'));
+        };
+
+        graph.getModel().addListener(mxEvent.UNDO, listener);
+        graph.getView().addListener(mxEvent.UNDO, listener);
+
+        document.getElementById("undo").onclick = function () {
+            undoManager.undo();
+        }
+
+        document.getElementById("redo").onclick = function () {
+            undoManager.redo();
+        }
+
+        document.getElementById("save").onclick = function () {
+            var encoder = new mxCodec();
+            var node = encoder.encode(graph.getModel());
+            mxUtils.popup(mxUtils.getPrettyXml(node), true);
+        };
+
+        document.getElementById("insertPage").onclick = function () {
+           //document.getElementById("bottomBar").innerHTML = '<div style="position: relative; display: inline-block; vertical-align: top; height: 30px; white-space: nowrap; overflow: hidden; font-size: 12px; margin-left: 30px;"> <div title="Page-1 (k8oaIBevAUwSV2_9oCbF)" class="geActivePage" draggable="true"style="display: inline-block; white-space: nowrap; box-sizing: border-box; position: relative; overflow: hidden; margin-left: -1px; height: 30px; padding: 8px 4px; border-width: 1px; border-style: none solid solid; border-color: rgb(192, 192, 192); background-color: rgb(238, 238, 238); cursor: move; color: gray; max-width: 140px; width: 140px; text-overflow: ellipsis; font-weight: bold;">Page-2</div></div>';
+        }
     }
 }
 
@@ -132,7 +157,7 @@ function setStyle(style) {
     style[mxConstants.STYLE_IMAGE_HEIGHT] = '30';
 }
 
-function setEdgeStyle(style){
+function setEdgeStyle(style) {
     style[mxConstants.STYLE_STROKEWIDTH] = 3;
     style[mxConstants.STYLE_STROKECOLOR] = '#000000';
 }
@@ -161,12 +186,11 @@ function addFuntionButton(graph, cell, flagDelete) {
 }
 
 function addNode(graph, cell) {
-	var model = graph.getModel();
+    var model = graph.getModel();
     var parent = graph.getDefaultParent();
 
     model.beginUpdate();
-	try
-	{   
+    try {
         var w = graph.container.offsetWidth;
         //inserimento del nodo nella posizione corretta
         var vertex = graph.insertVertex(parent, null, 'TITLE', w / 2 + 10, 90, 5, 5, 'image=img/cloud.png');
@@ -177,11 +201,10 @@ function addNode(graph, cell) {
 
         //pulsante aggiungi nodo
         addFuntionButton(graph, vertex, true);
-	}
-	finally
-	{
-		model.endUpdate();
-	}
+    }
+    finally {
+        model.endUpdate();
+    }
 }
 
 function deleteNode(graph, cell) {
