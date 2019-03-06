@@ -6,9 +6,6 @@ function main(container) {
         mxUtils.error('Browser is not supported!', 200, false);
     }
     else {
-        //var container = document.createElement('div');
-        document.body.appendChild(container);
-
         // Creazione del grafo all'interno del contenitore
         var graph = new mxGraph(container);
 
@@ -40,7 +37,7 @@ function main(container) {
             //grandezza della pagina
             var w = graph.container.offsetWidth;
             //inserimento del nodo nella posizione corretta
-            var root = graph.insertVertex(parent, null, 'TITLE', w / 2 + 10, 90, 5, 5, 'image=img/logo.png');
+            var root = graph.insertVertex(parent, null, 'TITLE', (w / 2) - 100, 90, 5, 5, 'image=img/logo.png');
             //inseriemento del nodo root nel grafico
             graph.updateCellSize(root);
             //pulsante aggiungi nodo
@@ -90,7 +87,7 @@ function main(container) {
         };
 
         document.getElementById("insertPage").onclick = function () {
-           //document.getElementById("bottomBar").innerHTML = '<div style="position: relative; display: inline-block; vertical-align: top; height: 30px; white-space: nowrap; overflow: hidden; font-size: 12px; margin-left: 30px;"> <div title="Page-1 (k8oaIBevAUwSV2_9oCbF)" class="geActivePage" draggable="true"style="display: inline-block; white-space: nowrap; box-sizing: border-box; position: relative; overflow: hidden; margin-left: -1px; height: 30px; padding: 8px 4px; border-width: 1px; border-style: none solid solid; border-color: rgb(192, 192, 192); background-color: rgb(238, 238, 238); cursor: move; color: gray; max-width: 140px; width: 140px; text-overflow: ellipsis; font-weight: bold;">Page-2</div></div>';
+            //document.getElementById("bottomBar").innerHTML = '<div style="position: relative; display: inline-block; vertical-align: top; height: 30px; white-space: nowrap; overflow: hidden; font-size: 12px; margin-left: 30px;"> <div title="Page-1 (k8oaIBevAUwSV2_9oCbF)" class="geActivePage" draggable="true"style="display: inline-block; white-space: nowrap; box-sizing: border-box; position: relative; overflow: hidden; margin-left: -1px; height: 30px; padding: 8px 4px; border-width: 1px; border-style: none solid solid; border-color: rgb(192, 192, 192); background-color: rgb(238, 238, 238); cursor: move; color: gray; max-width: 140px; width: 140px; text-overflow: ellipsis; font-weight: bold;">Page-2</div></div>';
         }
     }
 }
