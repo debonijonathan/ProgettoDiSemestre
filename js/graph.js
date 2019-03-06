@@ -9,9 +9,10 @@ function main(container) {
         // Creazione del grafo all'interno del contenitore
         var graph = new mxGraph(container);
 
+        var outline = document.getElementById('outlineContainer')
 
-
-
+        var outln = new mxOutline(graph, outline);
+       
 
         // Impostazione dello stile di default dei nodi
         var style = graph.getStylesheet().getDefaultVertexStyle();
@@ -61,7 +62,8 @@ function main(container) {
         }
 
         document.getElementById("print").onclick = function () {
-            print();
+            var preview = new mxPrintPreview(graph, 1);
+            preview.open();
         }
 
         var undoManager = new mxUndoManager();
@@ -86,7 +88,7 @@ function main(container) {
             mxUtils.popup(mxUtils.getPrettyXml(node), true);
         };
 
-        document.getElementById("insertPage").onclick = function () {
+        document.getElementById("newPage").onclick = function () {
             //document.getElementById("bottomBar").innerHTML = '<div style="position: relative; display: inline-block; vertical-align: top; height: 30px; white-space: nowrap; overflow: hidden; font-size: 12px; margin-left: 30px;"> <div title="Page-1 (k8oaIBevAUwSV2_9oCbF)" class="geActivePage" draggable="true"style="display: inline-block; white-space: nowrap; box-sizing: border-box; position: relative; overflow: hidden; margin-left: -1px; height: 30px; padding: 8px 4px; border-width: 1px; border-style: none solid solid; border-color: rgb(192, 192, 192); background-color: rgb(238, 238, 238); cursor: move; color: gray; max-width: 140px; width: 140px; text-overflow: ellipsis; font-weight: bold;">Page-2</div></div>';
         }
     }
