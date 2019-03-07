@@ -13,10 +13,11 @@ function main(container) {
         // Creazione del grafo all'interno del contenitore
         var graph = new mxGraph(container);
 
+        //inizio finestrella in alto a sinistar
         var outline = document.getElementById('outlineContainer')
 
         var outln = new mxOutline(graph, outline);
-       
+        // fine
 
         // Impostazione dello stile di default dei nodi
         var style = graph.getStylesheet().getDefaultVertexStyle();
