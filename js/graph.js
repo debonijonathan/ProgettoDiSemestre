@@ -72,16 +72,7 @@ function main(container) {
             undoManager.undoableEditHappened(evt.getProperty('edit'));
         };
 
-        graph.getModel().addListener(mxEvent.UNDO, listener);
-        graph.getView().addListener(mxEvent.UNDO, listener);
 
-        document.getElementById("undo").onclick = function () {
-            undoManager.undo();
-        }
-
-        document.getElementById("redo").onclick = function () {
-            undoManager.redo();
-        }
 
         document.getElementById("save").onclick = function () {
             var encoder = new mxCodec();
@@ -89,9 +80,67 @@ function main(container) {
             mxUtils.popup(mxUtils.getPrettyXml(node), true);
         };
 
-        document.getElementById("newPage").onclick = function () {
-            //document.getElementById("bottomBar").innerHTML = '<div style="position: relative; display: inline-block; vertical-align: top; height: 30px; white-space: nowrap; overflow: hidden; font-size: 12px; margin-left: 30px;"> <div title="Page-1 (k8oaIBevAUwSV2_9oCbF)" class="geActivePage" draggable="true"style="display: inline-block; white-space: nowrap; box-sizing: border-box; position: relative; overflow: hidden; margin-left: -1px; height: 30px; padding: 8px 4px; border-width: 1px; border-style: none solid solid; border-color: rgb(192, 192, 192); background-color: rgb(238, 238, 238); cursor: move; color: gray; max-width: 140px; width: 140px; text-overflow: ellipsis; font-weight: bold;">Page-2</div></div>';
+        var layout = new mxHierarchicalLayout(graph);
+
+        document.getElementById("vertical").onclick = function () {
+
+            layout.resizeParent = false;
+            layout.movePArent = false;
+            layout.parentBorder = 0;
+
+            layout.intraCellSpacing = 20;
+            layout.interRankCellSpacing = 50;
+            layout.interHierarchySpacing = 10;
+
+            layout.parallelEdgeSpacing = 10;
+
+            layout.orientation = mxConstants.DIRECTION_NORTH;
+
+            layout.fineTuning = true;
+            layout.tightenToSource = true;
+            layout.disableEdgeStyle = false;
+
+            layout.execute(graph.getDefaultParent())
         }
+
+        document.getElementById("orizontal").onclick = function () {
+
+            layout.resizeParent = false;
+            layout.movePArent = false;
+            layout.parentBorder = 0;
+
+            layout.intraCellSpacing = 20;
+            layout.interRankCellSpacing = 50;
+            layout.interHierarchySpacing = 10;
+
+            layout.parallelEdgeSpacing = 10;
+
+            layout.orientation = mxConstants.DIRECTION_WEST;
+
+            layout.fineTuning = true;
+            layout.tightenToSource = true;
+            layout.disableEdgeStyle = false;
+
+            layout.execute(graph.getDefaultParent())
+        }
+
+        var organic = new mxFastOrganicLayout(graph);
+        organic.forceConstant = 120;
+
+        document.getElementById("org").onclick = function () {
+            organic.execute(graph.getDefaultParent());
+        }
+
+        graph.getModel().addListener(mxEvent.UNDO, listener);
+        graph.getView().addListener(mxEvent.UNDO, listener);
+
+        document.getElementById("undo").onclick = function () {
+            undoManager.undo();
+        };
+
+        document.getElementById("redo").onclick = function () {
+            undoManager.redo();
+        };
     }
 }
 
