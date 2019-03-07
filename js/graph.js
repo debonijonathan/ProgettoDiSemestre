@@ -117,8 +117,6 @@ function createPopupMenu(graph, menu, cell, evt)
 		{
 			graph.startEditingAtCell(cell);
 		});
-
-        menu.addSeparator();
         
         menu.addItem('Edit Image', 'img/image.png', function()
 		{
@@ -126,8 +124,23 @@ function createPopupMenu(graph, menu, cell, evt)
             input.type = 'file';
             input.accept= 'image/x-png,image/gif,image/jpeg';
             input.click();
-		});
-	}
+        });
+
+        menu.addSeparator();
+
+        
+        menu.addItem('Export', 'img/export.png', function()
+		{
+            var encoder = new mxCodec();
+			var node = encoder.encode(graph.getModel());
+			mxUtils.popup(mxUtils.getXml(node), true);
+        });	
+
+        menu.addItem('Import', 'img/import.png', function()
+		{
+            
+        });	
+    }
 
 };
 
