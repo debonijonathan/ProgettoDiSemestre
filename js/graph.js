@@ -6,7 +6,6 @@ function main(container) {
         mxUtils.error('Browser is not supported!', 200, false);
     }
     else {
-
         //Al click del pulsante destro non vengono visualizzate
         //le info del sistema operativo
         mxEvent.disableContextMenu(container);
@@ -56,10 +55,13 @@ function main(container) {
 
 
         // Installs a popupmenu handler using local function (see below).
-        graph.popupMenuHandler.factoryMethod = function(menu, cell, evt)
-        {
+        graph.popupMenuHandler.factoryMethod = function(menu, cell, evt){
             return createPopupMenu(graph, menu, cell, evt);
         };
+
+        document.getElementById("zoomIn").onclick = function () {
+            graph.zoomIn();
+        }
 
         document.getElementById("zoomIn").onclick = function () {
             graph.zoomIn();
@@ -111,7 +113,6 @@ function createPopupMenu(graph, menu, cell, evt)
 {
 	if (cell != null)
 	{
-
 		menu.addItem('Edit label', 'img/pencil.png', function()
 		{
 			graph.startEditingAtCell(cell);
@@ -125,9 +126,6 @@ function createPopupMenu(graph, menu, cell, evt)
             input.type = 'file';
             input.accept= 'image/x-png,image/gif,image/jpeg';
             input.click();
-            input.remove();
-            alert(input);
-			graph.startEditingAtCell(cell);
 		});
 	}
 
