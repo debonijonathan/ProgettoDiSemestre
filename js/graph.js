@@ -9,6 +9,10 @@ function main() {
         var container = document.createElement('div');
         document.body.appendChild(container);
 
+        //Al click del pulsante destro non vengono visualizzate
+        //le info del sistema operativo
+        mxEvent.disableContextMenu(container);
+
         // Creazione del grafo all'interno del contenitore
         var graph = new mxGraph(container);
 
@@ -49,36 +53,43 @@ function main() {
             graph.getModel().endUpdate();
         }
 
+
+                // Installs a popupmenu handler using local function (see below).
+        graph.popupMenuHandler.factoryMethod = function(menu, cell, evt)
+        {
+            return createPopupMenu(graph, menu, cell, evt);
+        };
+
     }
 }
 
-/*function setAutoCreate(graph){
-    // Enables automatic layout on the graph and installs
-    // a tree layout for all groups who's children are
-    // being changed, added or removed.
-    var layout = new mxCompactTreeLayout(graph, false);
-    layout.useBoundingBox = false;
-    layout.edgeRouting = false;
-    layout.levelDistance = 60;
-    layout.nodeDistance = 16;
+// Function to create the entries in the popupmenu
+function createPopupMenu(graph, menu, cell, evt)
+{
+	if (cell != null)
+	{
 
-    // Allows the layout to move cells even though cells
-    // aren't movable in the graph
-    layout.isVertexMovable = function(cell)
-    {
-        return true;
-    };
+		menu.addItem('Edit label', 'img/pencil.png', function()
+		{
+			graph.startEditingAtCell(cell);
+		});
 
-    var layoutMgr = new mxLayoutManager(graph);
+        menu.addSeparator();
+        
+        menu.addItem('Edit Image', 'img/image.png', function()
+		{
+            var input = document.createElement('input');
+            input.type = 'file';
+            input.accept= 'image/x-png,image/gif,image/jpeg';
+            input.click();
+            input.remove();
+            alert(input);
+			graph.startEditingAtCell(cell);
+		});
+	}
 
-    layoutMgr.getLayout = function(cell)
-    {
-        if (cell.getChildCount() > 0)
-        {
-            return layout;
-        }
-	};
-}*/
+};
+
 function setStyle(style) {
     //Rettangolo per definire un nodo
     style[mxConstants.STYLE_SHAPE] = 'label';
@@ -129,6 +140,7 @@ function addFuntionButton(graph, cell, flagDelete) {
         addNode(graph, cell);
     }));
 
+
     if (flagDelete) {
         var deleteOverlay = new mxCellOverlay(new mxImage('img/delete.png', 20, 20), 'Add');
         deleteOverlay.cursor = 'hand';
@@ -152,18 +164,21 @@ function addNode(graph, cell) {
         var w = graph.container.offsetWidth;
         //inserimento del nodo nella posizione corretta
         var vertex = graph.insertVertex(parent, null, 'TITLE', w / 2 + 10, 90, 5, 5, 'image=img/cloud.png');
+    
         //inseriemento del nodo vertex nel grafico
         graph.updateCellSize(vertex);
         //Inseriamo il collegamento tra il nodo parent e il nodo vertice
         graph.insertEdge(parent, null, '', cell, vertex);
-
         //pulsante aggiungi nodo
         addFuntionButton(graph, vertex, true);
 	}
 	finally
 	{
 		model.endUpdate();
-	}
+    }
+    
+
+
 }
 
 function deleteNode(graph, cell) {
