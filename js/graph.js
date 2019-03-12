@@ -169,8 +169,19 @@ function createPopupMenu(graph, menu, cell, evt)
         
         menu.addItem('Edit Image', 'img/image.png', function()
         {
-            getFile('image/x-png,image/gif,image/jpeg');
-            deleteNode(graph, cell);
+             //getFile('image/x-png,image/gif,image/jpeg');
+             //document.getElementById("cell").value = cell;
+             //document.getElementById("graph").value = graph;
+
+            //Setto il nuovo stile per poter cambiare immagine
+            var model = graph.getModel();
+            var style = new Array();
+            
+            style[mxConstants.STYLE_IMAGE] = 'img/image.png';
+
+            graph.stylesheet.putCellStyle('rounded', style);
+            model.setStyle(cell, 'rounded');
+            location.href = "#popup2";
 
         });
 
@@ -193,6 +204,12 @@ function createPopupMenu(graph, menu, cell, evt)
     }
 
 };
+
+function changeStyleCell(){
+    alert("inserire l'immagine")
+}
+
+
 
 function setStyle(style) {
     //Rettangolo per definire un nodo
@@ -281,6 +298,7 @@ function addNode(graph, cell) {
     }
 }
 
+
 function deleteNode(graph, cell) {
     // Salvo tutti i nodi figli di cell
     var children = [];
@@ -295,7 +313,7 @@ function deleteNode(graph, cell) {
 }
 
 function openForm() {
-    location.href = "#popupsave";
+    location.href = "#popupexport";
 }
 
 function getFile(accepted){
@@ -327,6 +345,6 @@ function getFile(accepted){
         txt  += "<br>The path of the selected file: " + x.value; // If the browser does not support the files property, it will return the path of the selected file instead. 
         }
     }
-    document.getElementById("demo").innerHTML = txt;
-      
+    //document.getElementById("demo").innerHTML = txt;
+    return txt;
 }

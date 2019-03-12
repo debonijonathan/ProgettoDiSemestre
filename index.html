@@ -309,9 +309,9 @@
       </div>
     </div>
   </div>
-  <div id="popupsave" class="overlay">
+  <div id="popupexport" class="overlay">
       <div class="popup">
-        <h2>Save As...</h2>
+        <h2>Export In...</h2>
         <a class="close" href="#">×</a>
         <div class="content">
           <input type="image" src="img/local.png" alt="LocalStorage" width="64" height="64"/>
@@ -320,7 +320,17 @@
         </div>
       </div>
   </div>
-  <input type="file" style="display:none;" id="myFile" multiple size="1" onchange="myFunction()">
+  <div id="popup2" class="overlay">
+      <div class="popup">
+        <h2>Export In...</h2>
+        <a class="close" href="#">×</a>
+        <div class="content">
+            <input type="file" id="myFile2" multiple size="1" onchange="changeStyleCell()">
+        </div>
+      </div>
+  </div>
+
+  <input type="file" style="display:block;" id="myFile" multiple size="1" onchange="myFunction()">
 
 
   <!-- Bootstrap core JavaScript-->
