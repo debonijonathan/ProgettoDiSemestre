@@ -168,11 +168,10 @@ function createPopupMenu(graph, menu, cell, evt)
 		});
         
         menu.addItem('Edit Image', 'img/image.png', function()
-		{
-            var input = document.createElement('input');
-            input.type = 'file';
-            input.accept= 'image/x-png,image/gif,image/jpeg';
-            input.click();
+        {
+            getFile('image/x-png,image/gif,image/jpeg');
+            deleteNode(graph, cell);
+
         });
 
         menu.addSeparator();
@@ -182,12 +181,14 @@ function createPopupMenu(graph, menu, cell, evt)
 		{
             var encoder = new mxCodec();
 			var node = encoder.encode(graph.getModel());
-			mxUtils.popup(mxUtils.getXml(node), true);
+            //mxUtils.popup(mxUtils.getXml(node), true);
+            alert(mxUtils.getXml(node));
+            openForm();
         });	
 
         menu.addItem('Import', 'img/import.png', function()
 		{
-            
+            getFile("text/xml");
         });	
     }
 
@@ -290,4 +291,42 @@ function deleteNode(graph, cell) {
 
     // rimuovo tutti i figli
     graph.removeCells(children);
+    return children;
+}
+
+function openForm() {
+    location.href = "#popupsave";
+}
+
+function getFile(accepted){
+    document.getElementById('myFile').accept=accepted;
+    document.getElementById('myFile').click();
+    var x = document.getElementById("myFile");
+    var txt = "";
+    if ('files' in x) {
+        if (x.files.length == 0) {
+        txt = "Select one or more files.";
+        } else {
+        for (var i = 0; i < x.files.length; i++) {
+            txt += "<br><strong>" + (i+1) + ". file</strong><br>";
+            var file = x.files[i];
+            if ('name' in file) {
+            txt += "name: " + file.name + "<br>";
+            }
+            if ('size' in file) {
+            txt += "size: " + file.size + " bytes <br>";
+            }
+        }
+        }
+    } 
+    else {
+        if (x.value == "") {
+        txt += "Select one or more files.";
+        } else {
+        txt += "The files property is not supported by your browser!";
+        txt  += "<br>The path of the selected file: " + x.value; // If the browser does not support the files property, it will return the path of the selected file instead. 
+        }
+    }
+    document.getElementById("demo").innerHTML = txt;
+      
 }

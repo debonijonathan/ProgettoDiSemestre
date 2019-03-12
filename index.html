@@ -253,11 +253,13 @@
               </div>
             </div>
             <!-- Creates a container for the outline -->
+
             <div class="row-lg-1 mb-6">
               <div id="outlineContainer"
                 style="z-index:1;position:relative;overflow:hidden;top:0px;right:0px;width:160px;height:120px;background:transparent;border-style:solid;border-color:lightgray;">
               </div>
             </div>
+          </div>
           </div>
         </div>
       </div>
@@ -265,7 +267,6 @@
     </div>
     <!-- /.container-fluid -->
 
-  </div>
   <!-- End of Main Content -->
 
   <!-- Footer -->
@@ -308,6 +309,19 @@
       </div>
     </div>
   </div>
+  <div id="popupsave" class="overlay">
+      <div class="popup">
+        <h2>Save As...</h2>
+        <a class="close" href="#">×</a>
+        <div class="content">
+          <input type="image" src="img/local.png" alt="LocalStorage" width="64" height="64"/>
+          <input type="image" src="img/googledrive.png" alt="GoogleDrive" width="64" height="64"/>
+          <input type="image" src="img/dropbox.png" alt="Dropbox" width="64" height="64"/>
+        </div>
+      </div>
+  </div>
+  <input type="file" style="display:none;" id="myFile" multiple size="1" onchange="myFunction()">
+
 
   <!-- Bootstrap core JavaScript-->
   <script src="vendor/jquery/jquery.min.js"></script>
