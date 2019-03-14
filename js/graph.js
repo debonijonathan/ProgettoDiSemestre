@@ -90,14 +90,6 @@ function main(container) {
             undoManager.undoableEditHappened(evt.getProperty('edit'));
         };
 
-
-
-        document.getElementById("save").onclick = function () {
-            var encoder = new mxCodec();
-            var node = encoder.encode(graph.getModel());
-            mxUtils.popup(mxUtils.getPrettyXml(node), true);
-        };
-
         var layout = new mxHierarchicalLayout(graph);
 
         document.getElementById("vertical").onclick = function () {
