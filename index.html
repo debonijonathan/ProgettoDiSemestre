@@ -30,7 +30,8 @@
   <!-- Custom styles for this template-->
   <link href="css/sb-admin-2.min.css" rel="stylesheet">
 
-  <script type="text/javascript" src="lib/mxClient.js"></script>
+  <script type="text/javascript" src="lib/mxGraph/mxClient.js"></script>
+  <script type="text/javascript" src="lib/FileSaver.js-master/dist/FileSaver.js"></script>
 
   <!-- Loads our Mindmap library -->
   <script type="text/javascript" src="js/graph.js"></script>
@@ -314,7 +315,7 @@
         <h2>Export In...</h2>
         <a class="close" href="#">×</a>
         <div class="content">
-          <input type="image" src="img/local.png" alt="LocalStorage" width="64" height="64"/>
+          <input type="image" src="img/local.png" alt="LocalStorage" width="64" height="64" onclick="downloadFile()"/>
           <input type="image" src="img/googledrive.png" alt="GoogleDrive" width="64" height="64"/>
           <input type="image" src="img/dropbox.png" alt="Dropbox" width="64" height="64"/>
         </div>

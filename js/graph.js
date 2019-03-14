@@ -1,3 +1,4 @@
+var graph;
 function main(container) {
     // Checks if browser is supported
     if (!mxClient.isBrowserSupported()) {
@@ -10,7 +11,7 @@ function main(container) {
         //le info del sistema operativo
         mxEvent.disableContextMenu(container);
         // Creazione del grafo all'interno del contenitore
-        var graph = new mxGraph(container);
+        graph = new mxGraph(container);
 
         //inizio finestrella in alto a sinistar
         var outline = document.getElementById('outlineContainer')
@@ -76,7 +77,11 @@ function main(container) {
         }
 
         document.getElementById("print").onclick = function () {
-            var preview = new mxPrintPreview(graph, 1);
+            //Scala per una pagina
+            var scale = mxUtils.getScaleForPageCount(1, graph);
+            //print su una pagina 
+            var preview = new mxPrintPreview(graph, scale);
+            //preview
             preview.open();
         }
 
@@ -192,18 +197,24 @@ function createPopupMenu(graph, menu, cell, evt)
 		{
             var encoder = new mxCodec();
 			var node = encoder.encode(graph.getModel());
-            //mxUtils.popup(mxUtils.getXml(node), true);
             alert(mxUtils.getXml(node));
             openForm();
         });	
 
         menu.addItem('Import', 'img/import.png', function()
 		{
-            getFile("text/xml");
+            //var xml = mxUtils.getTextContent(read("/test/test.xml"));
+            var xml = "<mxGraphModel><root><mxCell id=\"0\"/><mxCell id=\"1\" parent=\"0\"/><mxCell id=\"2\" value=\"TITLE\" style=\"image=img/logo.png\" vertex=\"1\" parent=\"1\"><mxGeometry x=\"187\" y=\"90\" width=\"140\" height=\"60\" as=\"geometry\"/></mxCell><mxCell id=\"3\" value=\"TITLE\" style=\"image=img/cloud.png\" vertex=\"1\" parent=\"1\"><mxGeometry x=\"300\" y=\"270\" width=\"140\" height=\"60\" as=\"geometry\"/></mxCell><mxCell id=\"4\" value=\"\" edge=\"1\" parent=\"1\" source=\"2\" target=\"3\"><mxGeometry relative=\"1\" as=\"geometry\"/></mxCell></root></mxGraphModel>";
+            var xmlDocument = mxUtils.parseXml(xml);
+            var decoder = new mxCodec(xmlDocument);
+            var node = xmlDocument.documentElement;
+            decoder.decode(node, graph.getModel());
+
         });	
     }
 
 };
+
 
 function changeStyleCell(){
     alert("inserire l'immagine")
@@ -310,6 +321,14 @@ function deleteNode(graph, cell) {
     // rimuovo tutti i figli
     graph.removeCells(children);
     return children;
+}
+
+function downloadFile(){
+    var d = new Date();
+    var encoder = new mxCodec();
+    var node = encoder.encode(graph.getModel());
+    var blob = new Blob([mxUtils.getPrettyXml(node)], {type: "text/plain;charset=utf-8"});
+    saveAs(blob, d+".xml");
 }
 
 function openForm() {
