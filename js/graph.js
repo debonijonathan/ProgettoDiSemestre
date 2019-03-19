@@ -200,8 +200,20 @@ function createPopupMenu(graph, menu, cell, evt)
             var xmlDocument = mxUtils.parseXml(xml);
             var decoder = new mxCodec(xmlDocument);
             var node = xmlDocument.documentElement;
-            decoder.decode(node, graph.getModel());
+            decoder.decode(node, graph.getModel());       
+            var root = graph.getModel().getCell("2");
+            var cnt = 0;
+            graph.traverse(root, true, function (vertex) {
+                console.log("id: " + vertex.getId() + ", value: " + vertex.getValue());
+                if(cnt == 0)
+                    addFuntionButton(graph,vertex,false);
+                else
+                    addFuntionButton(graph,vertex,true);
+                
+                cnt +=1;
 
+
+            });     
         });	
     }
 
@@ -321,6 +333,10 @@ function downloadFile(){
     var node = encoder.encode(graph.getModel());
     var blob = new Blob([mxUtils.getPrettyXml(node)], {type: "text/plain;charset=utf-8"});
     saveAs(blob, d+".xml");
+}
+
+function exportImage(){
+
 }
 
 function openForm() {
