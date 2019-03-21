@@ -36,6 +36,7 @@
   <!-- Loads our Mindmap library -->
   <script type="text/javascript" src="js/graph.js"></script>
   <script type="text/javascript" src="js/sideLeftBarFunction.js"></script>
+  <script src="https://apis.google.com/js/platform.js" async defer></script>
 
 </head>
 
@@ -68,7 +69,7 @@
 
       <!-- Nav Item - Pages Collapse Menu -->
       <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true"
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
           aria-controls="collapseOne">
           <i class="fas fa-fw fa-cog"></i>
           <span>Zoom</span>
@@ -323,9 +324,12 @@
         <a class="close" href="#">×</a>
         <div class="content">
           <input type="image" src="img/local.png" alt="LocalStorage" width="64" height="64" onclick="downloadFile()"/>
-          <input type="image" src="img/googledrive.png" alt="GoogleDrive" width="64" height="64"/>
+          <input class="g-savetodrive" type="image" src="img/googledrive.png" alt="GoogleDrive" width="64" height="64" data-src="/test/test.xml" data-filename="test.xml" data-sitename= 'Mind Map'/>
           <input type="image" src="img/dropbox.png" alt="Dropbox" width="64" height="64" onclick="exportImage()"/>
         </div>
+        <script type="text/javascript">
+          gapi.savetodrive.go('content');
+        </script>
       </div>
   </div>
   <div id="popup2" class="overlay">
