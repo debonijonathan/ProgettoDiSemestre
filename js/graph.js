@@ -56,7 +56,7 @@ function main(container) {
 
 
         // Installs a popupmenu handler using local function (see below).
-        graph.popupMenuHandler.factoryMethod = function(menu, cell, evt){
+        graph.popupMenuHandler.factoryMethod = function (menu, cell, evt) {
             return createPopupMenu(graph, menu, cell, evt);
         };
 
@@ -85,52 +85,22 @@ function main(container) {
             preview.open();
         }
 
+        //edit manager
         var undoManager = new mxUndoManager();
         var listener = function (sender, evt) {
             undoManager.undoableEditHappened(evt.getProperty('edit'));
         };
 
-        var layout = new mxHierarchicalLayout(graph);
-
+        //orizontal layout
+        var layout = new mxCompactTreeLayout(graph);
         document.getElementById("vertical").onclick = function () {
-
-            layout.resizeParent = false;
-            layout.movePArent = false;
-            layout.parentBorder = 0;
-
-            layout.intraCellSpacing = 20;
-            layout.interRankCellSpacing = 50;
-            layout.interHierarchySpacing = 10;
-
-            layout.parallelEdgeSpacing = 10;
-
-            layout.orientation = mxConstants.DIRECTION_NORTH;
-
-            layout.fineTuning = true;
-            layout.tightenToSource = true;
-            layout.disableEdgeStyle = false;
-
-            layout.execute(graph.getDefaultParent())
+            layout.horizontal = false;
+            layout.execute(graph.getDefaultParent());
         }
 
+        //vertical layout
         document.getElementById("orizontal").onclick = function () {
-
-            layout.resizeParent = false;
-            layout.movePArent = false;
-            layout.parentBorder = 0;
-
-            layout.intraCellSpacing = 20;
-            layout.interRankCellSpacing = 50;
-            layout.interHierarchySpacing = 10;
-
-            layout.parallelEdgeSpacing = 10;
-
-            layout.orientation = mxConstants.DIRECTION_WEST;
-
-            layout.fineTuning = true;
-            layout.tightenToSource = true;
-            layout.disableEdgeStyle = false;
-
+            layout.horizontal = true;
             layout.execute(graph.getDefaultParent())
         }
 
@@ -155,25 +125,21 @@ function main(container) {
 }
 
 // Function to create the entries in the popupmenu
-function createPopupMenu(graph, menu, cell, evt)
-{
-	if (cell != null)
-	{
-		menu.addItem('Edit label', 'img/pencil.png', function()
-		{
-			graph.startEditingAtCell(cell);
-		});
-        
-        menu.addItem('Edit Image', 'img/image.png', function()
-        {
-             //getFile('image/x-png,image/gif,image/jpeg');
-             //document.getElementById("cell").value = cell;
-             //document.getElementById("graph").value = graph;
+function createPopupMenu(graph, menu, cell, evt) {
+    if (cell != null) {
+        menu.addItem('Edit label', 'img/pencil.png', function () {
+            graph.startEditingAtCell(cell);
+        });
+
+        menu.addItem('Edit Image', 'img/image.png', function () {
+            //getFile('image/x-png,image/gif,image/jpeg');
+            //document.getElementById("cell").value = cell;
+            //document.getElementById("graph").value = graph;
 
             //Setto il nuovo stile per poter cambiare immagine
             var model = graph.getModel();
             var style = new Array();
-            
+
             style[mxConstants.STYLE_IMAGE] = 'img/image.png';
 
             graph.stylesheet.putCellStyle('rounded', style);
@@ -184,43 +150,41 @@ function createPopupMenu(graph, menu, cell, evt)
 
         menu.addSeparator();
 
-        
-        menu.addItem('Export', 'img/export.png', function()
-		{
+
+        menu.addItem('Export', 'img/export.png', function () {
             var encoder = new mxCodec();
-			var node = encoder.encode(graph.getModel());
+            var node = encoder.encode(graph.getModel());
             alert(mxUtils.getXml(node));
             openForm();
-        });	
+        });
 
-        menu.addItem('Import', 'img/import.png', function()
-		{
+        menu.addItem('Import', 'img/import.png', function () {
             //var xml = mxUtils.getTextContent(read("/test/test.xml"));
             var xml = "<mxGraphModel><root><mxCell id=\"0\"/><mxCell id=\"1\" parent=\"0\"/><mxCell id=\"2\" value=\"TITLE\" style=\"image=img/logo.png\" vertex=\"1\" parent=\"1\"><mxGeometry x=\"187\" y=\"90\" width=\"140\" height=\"60\" as=\"geometry\"/></mxCell><mxCell id=\"3\" value=\"TITLE\" style=\"image=img/cloud.png\" vertex=\"1\" parent=\"1\"><mxGeometry x=\"300\" y=\"270\" width=\"140\" height=\"60\" as=\"geometry\"/></mxCell><mxCell id=\"4\" value=\"\" edge=\"1\" parent=\"1\" source=\"2\" target=\"3\"><mxGeometry relative=\"1\" as=\"geometry\"/></mxCell></root></mxGraphModel>";
             var xmlDocument = mxUtils.parseXml(xml);
             var decoder = new mxCodec(xmlDocument);
             var node = xmlDocument.documentElement;
-            decoder.decode(node, graph.getModel());       
+            decoder.decode(node, graph.getModel());
             var root = graph.getModel().getCell("2");
             var cnt = 0;
             graph.traverse(root, true, function (vertex) {
                 console.log("id: " + vertex.getId() + ", value: " + vertex.getValue());
-                if(cnt == 0)
-                    addFuntionButton(graph,vertex,false);
+                if (cnt == 0)
+                    addFuntionButton(graph, vertex, false);
                 else
-                    addFuntionButton(graph,vertex,true);
-                
-                cnt +=1;
+                    addFuntionButton(graph, vertex, true);
+
+                cnt += 1;
 
 
-            });     
-        });	
+            });
+        });
     }
 
 };
 
 
-function changeStyleCell(){
+function changeStyleCell() {
     alert("inserire l'immagine")
 }
 
@@ -299,7 +263,7 @@ function addNode(graph, cell) {
         var w = graph.container.offsetWidth;
         //inserimento del nodo nella posizione corretta
         var vertex = graph.insertVertex(parent, null, 'TITLE', w / 2 + 10, 90, 5, 5, 'image=img/cloud.png');
-    
+
         //inseriemento del nodo vertex nel grafico
         graph.updateCellSize(vertex);
         //Inseriamo il collegamento tra il nodo parent e il nodo vertice
@@ -327,15 +291,15 @@ function deleteNode(graph, cell) {
     return children;
 }
 
-function downloadFile(){
+function downloadFile() {
     var d = new Date();
     var encoder = new mxCodec();
     var node = encoder.encode(graph.getModel());
-    var blob = new Blob([mxUtils.getPrettyXml(node)], {type: "text/plain;charset=utf-8"});
-    saveAs(blob, d+".xml");
+    var blob = new Blob([mxUtils.getPrettyXml(node)], { type: "text/plain;charset=utf-8" });
+    saveAs(blob, d + ".xml");
 }
 
-function exportImage(){
+function exportImage() {
 
 }
 
@@ -343,33 +307,33 @@ function openForm() {
     location.href = "#popupexport";
 }
 
-function getFile(accepted){
-    document.getElementById('myFile').accept=accepted;
+function getFile(accepted) {
+    document.getElementById('myFile').accept = accepted;
     document.getElementById('myFile').click();
     var x = document.getElementById("myFile");
     var txt = "";
     if ('files' in x) {
         if (x.files.length == 0) {
-        txt = "Select one or more files.";
+            txt = "Select one or more files.";
         } else {
-        for (var i = 0; i < x.files.length; i++) {
-            txt += "<br><strong>" + (i+1) + ". file</strong><br>";
-            var file = x.files[i];
-            if ('name' in file) {
-            txt += "name: " + file.name + "<br>";
-            }
-            if ('size' in file) {
-            txt += "size: " + file.size + " bytes <br>";
+            for (var i = 0; i < x.files.length; i++) {
+                txt += "<br><strong>" + (i + 1) + ". file</strong><br>";
+                var file = x.files[i];
+                if ('name' in file) {
+                    txt += "name: " + file.name + "<br>";
+                }
+                if ('size' in file) {
+                    txt += "size: " + file.size + " bytes <br>";
+                }
             }
         }
-        }
-    } 
+    }
     else {
         if (x.value == "") {
-        txt += "Select one or more files.";
+            txt += "Select one or more files.";
         } else {
-        txt += "The files property is not supported by your browser!";
-        txt  += "<br>The path of the selected file: " + x.value; // If the browser does not support the files property, it will return the path of the selected file instead. 
+            txt += "The files property is not supported by your browser!";
+            txt += "<br>The path of the selected file: " + x.value; // If the browser does not support the files property, it will return the path of the selected file instead. 
         }
     }
     //document.getElementById("demo").innerHTML = txt;
