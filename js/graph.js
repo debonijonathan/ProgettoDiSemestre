@@ -160,6 +160,7 @@ function createPopupMenu(graph, menu, cell, evt) {
 
         menu.addItem('Import', 'img/import.png', function () {
             //var xml = mxUtils.getTextContent(read("/test/test.xml"));
+            location.href = "#popup3";
             var xml = "<mxGraphModel><root><mxCell id=\"0\"/><mxCell id=\"1\" parent=\"0\"/><mxCell id=\"2\" value=\"TITLE\" style=\"image=img/logo.png\" vertex=\"1\" parent=\"1\"><mxGeometry x=\"187\" y=\"90\" width=\"140\" height=\"60\" as=\"geometry\"/></mxCell><mxCell id=\"3\" value=\"TITLE\" style=\"image=img/cloud.png\" vertex=\"1\" parent=\"1\"><mxGeometry x=\"300\" y=\"270\" width=\"140\" height=\"60\" as=\"geometry\"/></mxCell><mxCell id=\"4\" value=\"\" edge=\"1\" parent=\"1\" source=\"2\" target=\"3\"><mxGeometry relative=\"1\" as=\"geometry\"/></mxCell></root></mxGraphModel>";
             var xmlDocument = mxUtils.parseXml(xml);
             var decoder = new mxCodec(xmlDocument);
@@ -175,8 +176,6 @@ function createPopupMenu(graph, menu, cell, evt) {
                     addFuntionButton(graph, vertex, true);
 
                 cnt += 1;
-
-
             });
         });
     }
@@ -299,7 +298,7 @@ function downloadFile() {
     saveAs(blob, d + ".xml");
 }
 
-function exportImage() {
+function importXML() {
 
 }
 

@@ -327,23 +327,32 @@
           <input class="g-savetodrive" type="image" src="img/googledrive.png" alt="GoogleDrive" width="64" height="64" data-src="/test/test.xml" data-filename="test.xml" data-sitename= 'Mind Map'/>
           <input type="image" src="img/dropbox.png" alt="Dropbox" width="64" height="64" onclick="exportImage()"/>
         </div>
-        <script type="text/javascript">
-          gapi.savetodrive.go('content');
-        </script>
       </div>
   </div>
   <div id="popup2" class="overlay">
       <div class="popup">
-        <h2>Export In...</h2>
+        <h2>Insert Image...</h2>
         <a class="close" href="#">×</a>
         <div class="content">
-            <input type="file" id="myFile2" multiple size="1" onchange="changeStyleCell()">
+          <form action="upload.php" method="post" enctype="multipart/form-data">
+            <input type="file" name="fileToUpload" id="fileToUpload" accept="image/*" multiple size="1">
+            <input type="submit" value="Upload Image" name="submit">
+          </form>
         </div>
       </div>
   </div>
-
-  <input type="file" style="display:block;" id="myFile" multiple size="1" onchange="myFunction()">
-
+  <div id="popup3" class="overlay">
+    <div class="popup">
+      <h2>Import XML...</h2>
+      <a class="close" href="#">×</a>
+      <div class="content">
+        <form action="upload.php" method="post" enctype="multipart/form-data">
+          <input type="file" name="fileToUpload" id="fileToUpload" accept="text/xml" multiple size="1">
+          <input type="submit" value="Upload Image" name="submit">
+        </form>
+      </div>
+    </div>
+</div>
 
   <!-- Bootstrap core JavaScript-->
   <script src="vendor/jquery/jquery.min.js"></script>
