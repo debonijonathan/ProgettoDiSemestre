@@ -1,4 +1,5 @@
 var graph;
+var levelIsSetted = [false, false, false, false];
 function main(container) {
     // Checks if browser is supported
     if (!mxClient.isBrowserSupported()) {
@@ -44,6 +45,10 @@ function main(container) {
             var w = graph.container.offsetWidth;
             //inserimento del nodo nella posizione corretta
             var root = graph.insertVertex(parent, null, 'TITLE', (w / 2) - 100, 90, 5, 5, 'image=img/logo.png');
+            //id for level label
+            var rootLabel = graph.insertVertex(root, null, 'Level 1', -1, 0.5, 0, 0, null, true);
+            root.myId = 0;
+            levelIsSetted[0] = true;
             //inseriemento del nodo root nel grafico
             graph.updateCellSize(root);
             //pulsante aggiungi nodo
@@ -259,9 +264,36 @@ function addNode(graph, cell) {
 
     model.beginUpdate();
     try {
-        var w = graph.container.offsetWidth;
-        //inserimento del nodo nella posizione corretta
-        var vertex = graph.insertVertex(parent, null, 'TITLE', w / 2 + 10, 90, 5, 5, 'image=img/cloud.png');
+        var w = graph.container.offsetWidth + 10;
+        //inserimento del nodo nella posizione corretta con il livello corretto
+        var vertex;
+        if (cell.myId == 0) {
+            vertex = graph.insertVertex(parent, null, 'TITLE', w / 2 + 10, 90, 5, 5, 'image=img/cloud.png');
+            vertex.myId = cell.myId + 1;
+            console.log(vertex.myId);
+            if (levelIsSetted[1] == false) {
+                var rootLabel = graph.insertVertex(vertex, null, 'Level 2', -1, 0.5, 0, 0, null, true);
+                levelIsSetted[1] = true;
+            }
+        } else if (cell.myId == 1) {
+            vertex = graph.insertVertex(parent, null, 'TITLE', w / 2 + 10, 90, 5, 5, 'image=img/cloud.png');
+            vertex.myId = cell.myId + 1;
+            console.log(vertex.myId);
+            if (levelIsSetted[2] == false) {
+                var rootLabel = graph.insertVertex(vertex, null, 'Level 3', -1, 0.5, 0, 0, null, true);
+                levelIsSetted[2] = true;
+            }
+        } else if (cell.myId == 2) {
+            vertex = graph.insertVertex(parent, null, 'TITLE', w / 2 + 10, 90, 5, 5, 'image=img/cloud.png');
+            vertex.myId = cell.myId + 1;
+            console.log(vertex.myId);
+            if (levelIsSetted[3] == false) {
+                var rootLabel = graph.insertVertex(vertex, null, 'Level 4', -1, 0.5, 0, 0, null, true);
+                levelIsSetted[3] = true;
+            }
+        } else {
+            vertex = graph.insertVertex(parent, null, 'TITLE', w / 2 + 10, 90, 5, 5, 'image=img/cloud.png');
+        }
 
         //inseriemento del nodo vertex nel grafico
         graph.updateCellSize(vertex);
