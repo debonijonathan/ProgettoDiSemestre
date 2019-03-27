@@ -1,5 +1,6 @@
 var graph;
 var levelIsSetted = [false, false, false, false];
+var verticalOrganizationLabel = false;
 
 function main(container) {
     // Checks if browser is supported
@@ -100,12 +101,14 @@ function main(container) {
         //orizontal layout
         var layout = new mxCompactTreeLayout(graph);
         document.getElementById("vertical").onclick = function () {
+            verticalOrganizationLabel = false;
             layout.horizontal = false;
             layout.execute(graph.getDefaultParent());
         }
 
         //vertical layout
         document.getElementById("orizontal").onclick = function () {
+            verticalOrganizationLabel = true;
             var children = getAllChildren(graph.getDefaultParent().children[0]);
             layout.horizontal = true;
             layout.execute(graph.getDefaultParent())
@@ -113,7 +116,7 @@ function main(container) {
                 if (children[i].children != null) {
                     var pos = children[i].children[0].id;
                     graph.removeCells(children[i].children);
-                    children[i].children[0] = graph.insertVertex(children[i], pos, pos, 0, -0.40, 0, 0, null, true);
+                    children[i].children[0] = graph.insertVertex(children[i], pos, pos, 0, -0.4, 0, 0, null, true);
                 }
             }
         }
@@ -273,11 +276,7 @@ function addLabelWithNode(cell, vertex, parent, pos) {
     //assegnamento id
     vertex.myId = cell.myId + 1;
     //se il livello in cui devo inserire la label per il livello è disponibile (cioè uguale a false) inserisco e setto a true l'array alla pos corrispndente
-    if (levelIsSetted[pos] == false) {
-        var stringId = 'Level ' + (pos + 1);
-        var label = graph.insertVertex(vertex, stringId, 'Level ' + (pos + 1), -1, 0.5, 0, 0, null, true);
-        levelIsSetted[pos] = true;
-    }
+    addLabel(vertex, pos);
     //ritorno il vertice che poi andrò ad aggiungere al mio graph
     return vertex;
 }
@@ -341,10 +340,16 @@ function deleteChildrenHaveLabel(children, graph) {
     }
 }
 
-function addLabel(cell, pos) {
+function addLabel(vertex, pos) {
+    var x = -1;
+    var y = 0.5;
+    if (verticalOrganizationLabel == true) {
+        x = 0;
+        y = -0.4;
+    }
     if (levelIsSetted[pos] == false) {
         var stringId = 'Level ' + (pos + 1);
-        var label = graph.insertVertex(cell, stringId, 'Level ' + (pos + 1), -1, 0.5, 0, 0, null, true);
+        var label = graph.insertVertex(vertex, stringId, 'Level ' + (pos + 1), x, y, 0, 0, null, true);
         levelIsSetted[pos] = true;
     }
 }
