@@ -281,14 +281,18 @@ function addNode(graph, cell) {
         var w = graph.container.offsetWidth;
         //inserimento del nodo nella posizione corretta con il livello corretto
         var vertex;
-        if (cell.myId == 0) {
-            vertex = addLabel(cell, vertex, parent, 1, w);
-        } else if (cell.myId == 1) {
-            vertex = addLabel(cell, vertex, parent, 2, w);
-        } else if (cell.myId == 2) {
-            vertex = addLabel(cell, vertex, parent, 3, w);
-        } else {
-            vertex = graph.insertVertex(parent, null, 'TITLE', w / 2 + 10, 90, 5, 5, 'image=img/cloud.png');
+        switch (cell.myId) {
+            case 0:
+                vertex = addLabel(cell, vertex, parent, 1, w);
+                break;
+            case 1:
+                vertex = addLabel(cell, vertex, parent, 2, w);
+                break;
+            case 2:
+                vertex = addLabel(cell, vertex, parent, 3, w);
+                break;
+            default:
+                vertex = graph.insertVertex(parent, null, 'TITLE', w / 2 + 10, 90, 5, 5, 'image=img/cloud.png');
         }
         //inseriemento del nodo vertex nel grafico
         graph.updateCellSize(vertex);
