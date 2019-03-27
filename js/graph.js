@@ -258,50 +258,44 @@ function addFuntionButton(graph, cell, flagDelete) {
     }
 }
 
+function addLabel(cell, vertex, parent, pos, w) {
+    //creo il vertice lo stesso e gli assegno l'id facendo id del padre + 1
+    vertex = graph.insertVertex(parent, null, 'TITLE', w / 2 + 10, 90, 5, 5, 'image=img/cloud.png');
+    //assegnamento id
+    vertex.myId = cell.myId + 1;
+    //se il livello in cui devo inserire la label per il livello è disponibile (cioè uguale a false) inserisco e setto a true l'array alla pos corrispndente
+    if (levelIsSetted[pos] == false) {
+        var rootLabel = graph.insertVertex(vertex, null, 'Level ' + (pos + 1), -1, 0.5, 0, 0, null, true);
+        levelIsSetted[pos] = true;
+    }
+    //ritorno il vertice che poi andrò ad aggiungere al mio graph
+    return vertex;
+}
+
 function addNode(graph, cell) {
     var model = graph.getModel();
     var parent = graph.getDefaultParent();
 
     model.beginUpdate();
     try {
-        var w = graph.container.offsetWidth + 10;
+        var w = graph.container.offsetWidth;
         //inserimento del nodo nella posizione corretta con il livello corretto
         var vertex;
         if (cell.myId == 0) {
-            vertex = graph.insertVertex(parent, null, 'TITLE', w / 2 + 10, 90, 5, 5, 'image=img/cloud.png');
-            vertex.myId = cell.myId + 1;
-            console.log(vertex.myId);
-            if (levelIsSetted[1] == false) {
-                var rootLabel = graph.insertVertex(vertex, null, 'Level 2', -1, 0.5, 0, 0, null, true);
-                levelIsSetted[1] = true;
-            }
+            vertex = addLabel(cell, vertex, parent, 1, w);
         } else if (cell.myId == 1) {
-            vertex = graph.insertVertex(parent, null, 'TITLE', w / 2 + 10, 90, 5, 5, 'image=img/cloud.png');
-            vertex.myId = cell.myId + 1;
-            console.log(vertex.myId);
-            if (levelIsSetted[2] == false) {
-                var rootLabel = graph.insertVertex(vertex, null, 'Level 3', -1, 0.5, 0, 0, null, true);
-                levelIsSetted[2] = true;
-            }
+            vertex = addLabel(cell, vertex, parent, 2, w);
         } else if (cell.myId == 2) {
-            vertex = graph.insertVertex(parent, null, 'TITLE', w / 2 + 10, 90, 5, 5, 'image=img/cloud.png');
-            vertex.myId = cell.myId + 1;
-            console.log(vertex.myId);
-            if (levelIsSetted[3] == false) {
-                var rootLabel = graph.insertVertex(vertex, null, 'Level 4', -1, 0.5, 0, 0, null, true);
-                levelIsSetted[3] = true;
-            }
+            vertex = addLabel(cell, vertex, parent, 3, w);
         } else {
             vertex = graph.insertVertex(parent, null, 'TITLE', w / 2 + 10, 90, 5, 5, 'image=img/cloud.png');
         }
-
         //inseriemento del nodo vertex nel grafico
         graph.updateCellSize(vertex);
         //Inseriamo il collegamento tra il nodo parent e il nodo vertice
         graph.insertEdge(parent, null, '', cell, vertex);
         //pulsante aggiungi nodo
         addFuntionButton(graph, vertex, true);
-
     }
     finally {
         model.endUpdate();
