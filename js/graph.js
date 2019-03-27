@@ -106,8 +106,16 @@ function main(container) {
 
         //vertical layout
         document.getElementById("orizontal").onclick = function () {
+            var children = getAllChildren(graph.getDefaultParent().children[0]);
             layout.horizontal = true;
             layout.execute(graph.getDefaultParent())
+            for (var i = 1; i < children.length; i++) {
+                if (children[i].children != null) {
+                    var pos = children[i].children[0].id;
+                    graph.removeCells(children[i].children);
+                    children[i].children[0] = graph.insertVertex(children[i], pos, pos, 0, -0.40, 0, 0, null, true);
+                }
+            }
         }
 
         var organic = new mxFastOrganicLayout(graph);
@@ -341,15 +349,21 @@ function addLabel(cell, pos) {
     }
 }
 
-
-function printAllNodeAt(altezza) {
-    var root = graph.getDefaultParent().children[0];
+function getAllChildren(root) {
     var children = [];
 
     // Cerco tutti i nodi figli
     graph.traverse(root, true, function (vertex) {
         children.push(vertex);
     });
+
+    return children;
+}
+
+
+function printAllNodeAt(altezza) {
+    var root = graph.getDefaultParent().children[0];
+    var children = getAllChildren(root);
 
     //aggiugo a solo uno dei filgi la label
     for (var i = 0; i < children.length; i++) {
@@ -363,11 +377,7 @@ function printAllNodeAt(altezza) {
 
 function deleteNode(graph, cell) {
     // Salvo tutti i nodi figli di cell
-    var children = [];
-    // Cerco tutti i nodi figli
-    graph.traverse(cell, true, function (vertex) {
-        children.push(vertex);
-    });
+    var children = getAllChildren(cell);
 
     // rimuovo tutti i figli
     graph.removeCells(children);
