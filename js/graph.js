@@ -1,5 +1,6 @@
 var graph;
 var levelIsSetted = [false, false, false, false];
+
 function main(container) {
     // Checks if browser is supported
     if (!mxClient.isBrowserSupported()) {
@@ -258,14 +259,15 @@ function addFuntionButton(graph, cell, flagDelete) {
     }
 }
 
-function addLabel(cell, vertex, parent, pos, w) {
+function addLabelWithNode(cell, vertex, parent, pos, w) {
     //creo il vertice lo stesso e gli assegno l'id facendo id del padre + 1
     vertex = graph.insertVertex(parent, null, 'TITLE', w / 2 + 10, 90, 5, 5, 'image=img/cloud.png');
     //assegnamento id
     vertex.myId = cell.myId + 1;
     //se il livello in cui devo inserire la label per il livello è disponibile (cioè uguale a false) inserisco e setto a true l'array alla pos corrispndente
     if (levelIsSetted[pos] == false) {
-        var rootLabel = graph.insertVertex(vertex, null, 'Level ' + (pos + 1), -1, 0.5, 0, 0, null, true);
+        var stringId = 'Level ' + (pos + 1);
+        var label = graph.insertVertex(vertex, stringId, 'Level ' + (pos + 1), -1, 0.5, 0, 0, null, true);
         levelIsSetted[pos] = true;
     }
     //ritorno il vertice che poi andrò ad aggiungere al mio graph
@@ -283,13 +285,13 @@ function addNode(graph, cell) {
         var vertex;
         switch (cell.myId) {
             case 0:
-                vertex = addLabel(cell, vertex, parent, 1, w);
+                vertex = addLabelWithNode(cell, vertex, parent, 1, w);
                 break;
             case 1:
-                vertex = addLabel(cell, vertex, parent, 2, w);
+                vertex = addLabelWithNode(cell, vertex, parent, 2, w);
                 break;
             case 2:
-                vertex = addLabel(cell, vertex, parent, 3, w);
+                vertex = addLabelWithNode(cell, vertex, parent, 3, w);
                 break;
             default:
                 vertex = graph.insertVertex(parent, null, 'TITLE', w / 2 + 10, 90, 5, 5, 'image=img/cloud.png');
@@ -307,6 +309,58 @@ function addNode(graph, cell) {
 }
 
 
+function deleteChildrenHaveLabel(children, graph) {
+    for (var i = 0; i < children.length; i++) {
+        if (children[i].children != null) {
+            var valueCell = children[i].children[0].value;
+            switch (valueCell) {
+                case "Level 2":
+                    levelIsSetted[1] = false;
+                    printAllNodeAt(1);
+                    break;
+                case "Level 3":
+                    levelIsSetted[2] = false;
+                    printAllNodeAt(2);
+                    break;
+                case "Level 4":
+                    levelIsSetted[3] = false;
+                    printAllNodeAt(3);
+                    break;
+                default:
+                    console.log('Errore');
+            }
+        }
+    }
+}
+
+function addLabel(cell, pos) {
+    if (levelIsSetted[pos] == false) {
+        var stringId = 'Level ' + (pos + 1);
+        var label = graph.insertVertex(cell, stringId, 'Level ' + (pos + 1), -1, 0.5, 0, 0, null, true);
+        levelIsSetted[pos] = true;
+    }
+}
+
+
+function printAllNodeAt(altezza) {
+    var root = graph.getDefaultParent().children[0];
+    var children = [];
+
+    // Cerco tutti i nodi figli
+    graph.traverse(root, true, function (vertex) {
+        children.push(vertex);
+    });
+
+    //aggiugo a solo uno dei filgi la label
+    for (var i = 0; i < children.length; i++) {
+        if (children[i].myId == altezza) {
+            addLabel(children[i], altezza)
+            break;
+        }
+    }
+}
+
+
 function deleteNode(graph, cell) {
     // Salvo tutti i nodi figli di cell
     var children = [];
@@ -317,6 +371,9 @@ function deleteNode(graph, cell) {
 
     // rimuovo tutti i figli
     graph.removeCells(children);
+    //funzione per vedere quale label è stata cancellata e se è stata cancellata
+    deleteChildrenHaveLabel(children, graph);
+
     return children;
 }
 
