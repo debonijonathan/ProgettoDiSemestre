@@ -259,9 +259,9 @@ function addFuntionButton(graph, cell, flagDelete) {
     }
 }
 
-function addLabelWithNode(cell, vertex, parent, pos, w) {
+function addLabelWithNode(cell, vertex, parent, pos) {
     //creo il vertice lo stesso e gli assegno l'id facendo id del padre + 1
-    vertex = graph.insertVertex(parent, null, 'TITLE', w / 2 + 10, 90, 5, 5, 'image=img/cloud.png');
+    vertex = graph.insertVertex(parent, null, 'TITLE', cell.geometry.x, cell.geometry.y + 150, 5, 5, 'image=img/cloud.png');
     //assegnamento id
     vertex.myId = cell.myId + 1;
     //se il livello in cui devo inserire la label per il livello è disponibile (cioè uguale a false) inserisco e setto a true l'array alla pos corrispndente
@@ -280,21 +280,21 @@ function addNode(graph, cell) {
 
     model.beginUpdate();
     try {
-        var w = graph.container.offsetWidth;
         //inserimento del nodo nella posizione corretta con il livello corretto
         var vertex;
         switch (cell.myId) {
             case 0:
-                vertex = addLabelWithNode(cell, vertex, parent, 1, w);
+                vertex = addLabelWithNode(cell, vertex, parent, 1);
                 break;
             case 1:
-                vertex = addLabelWithNode(cell, vertex, parent, 2, w);
+                vertex = addLabelWithNode(cell, vertex, parent, 2);
                 break;
             case 2:
-                vertex = addLabelWithNode(cell, vertex, parent, 3, w);
+                vertex = addLabelWithNode(cell, vertex, parent, 3);
                 break;
             default:
-                vertex = graph.insertVertex(parent, null, 'TITLE', w / 2 + 10, 90, 5, 5, 'image=img/cloud.png');
+                vertex = graph.insertVertex(parent, null, 'TITLE', cell.geometry.x, cell.geometry.y + 150, 5, 5, 'image=img/cloud.png');
+                console.log(parent);
         }
         //inseriemento del nodo vertex nel grafico
         graph.updateCellSize(vertex);
