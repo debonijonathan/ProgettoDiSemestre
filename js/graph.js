@@ -100,30 +100,6 @@ function main(container) {
             undoManager.undoableEditHappened(evt.getProperty('edit'));
         };
 
-        //orizontal layout
-        var layout = new mxCompactTreeLayout(graph);
-        document.getElementById("vertical").onclick = function () {
-            verticalOrganizationLabel = false;
-            var children = getAllChildren(graph.getDefaultParent().children[0]);
-            layout.horizontal = false;
-            layout.execute(graph.getDefaultParent());
-        }
-
-        //vertical layout
-        document.getElementById("orizontal").onclick = function () {
-            verticalOrganizationLabel = true;
-            var children = getAllChildren(graph.getDefaultParent().children[0]);
-            layout.horizontal = true;
-            for (var i = 1; i < children.length; i++) {
-                if (children[i].children != null) {
-                    var pos = children[i].children[0].id;
-                    graph.removeCells(children[i].children);
-                    children[i].children[0] = graph.insertVertex(children[i], pos, pos, 0, -0.4, 0, 0, null, true);
-                }
-            }
-            layout.execute(graph.getDefaultParent())
-        }
-
         var organic = new mxFastOrganicLayout(graph);
         organic.forceConstant = 120;
 
@@ -146,8 +122,9 @@ function main(container) {
 
 function orizzontalOrgnization() {
     var layout = new mxCompactTreeLayout(graph);
-    verticalOrganizationLabel = true;
     var children = getAllChildren(graph.getDefaultParent().children[0]);
+
+    verticalOrganizationLabel = true;
     layout.horizontal = true;
     for (var i = 1; i < children.length; i++) {
         if (children[i].children != null) {
@@ -161,6 +138,7 @@ function orizzontalOrgnization() {
 
 function verticalOrgnization() {
     var layout = new mxCompactTreeLayout(graph);
+
     verticalOrganizationLabel = false;
     layout.horizontal = false;
     layout.execute(graph.getDefaultParent());
@@ -177,7 +155,7 @@ function createPopupMenu(graph, menu, cell, evt) {
             //Setto il nuovo stile per poter cambiare immagine
             cellImage = cell;
             location.href = "#popup2";
-            
+
         });
 
         menu.addSeparator();
@@ -192,7 +170,7 @@ function createPopupMenu(graph, menu, cell, evt) {
         menu.addItem('Import', 'img/import.png', function () {
             //var xml = mxUtils.getTextContent(read("/test/Wed Mar 27 2019 15_29_16 GMT+0100 (CET).xml"));
             location.href = "#popup3";
-            
+
         });
     }
 
@@ -441,21 +419,21 @@ function getFile(accepted) {
     return txt;
 }
 
-function exportFileImage(){
+function exportFileImage() {
     var file = document.getElementById("fileToUpload").files[0];
     var formData = new FormData();
-    formData.append("fileToUpload",file);
+    formData.append("fileToUpload", file);
     var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
-      if (this.readyState == 4 && this.status == 200) {
-          var model = graph.getModel();
-          var style = new Array();
-          style[mxConstants.STYLE_IMAGE] = this.responseText;
+    xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            var model = graph.getModel();
+            var style = new Array();
+            style[mxConstants.STYLE_IMAGE] = this.responseText;
 
-          graph.stylesheet.putCellStyle(this.responseText, style);
-          model.setStyle(cellImage, this.responseText);
-          location.href = "#";
-      }
+            graph.stylesheet.putCellStyle(this.responseText, style);
+            model.setStyle(cellImage, this.responseText);
+            location.href = "#";
+        }
     };
     xhttp.open("POST", "upload.php", true);
     xhttp.send(formData);
@@ -464,31 +442,31 @@ function exportFileImage(){
 function importXML() {
     var file = document.getElementById("fileToUploadXML").files[0];
     var formData = new FormData();
-    formData.append("fileToUpload",file);
+    formData.append("fileToUpload", file);
 
     var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
-      if (this.readyState == 4 && this.status == 200) {
-          var xml = this.responseText;
-          var xmlDocument = mxUtils.parseXml(xml);
-          var decoder = new mxCodec(xmlDocument);
-          var node = xmlDocument.documentElement;
-          decoder.decode(node, graph.getModel());
-          var root = graph.getModel().getCell("2");
-          var cnt = 0;
-          graph.traverse(root, true, function (vertex) {
-              console.log("id: " + vertex.getId() + ", value: " + vertex.getValue());
-              if (cnt == 0)
-                  addFuntionButton(graph, vertex, false);
-              else
-                  addFuntionButton(graph, vertex, true);
+    xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            var xml = this.responseText;
+            var xmlDocument = mxUtils.parseXml(xml);
+            var decoder = new mxCodec(xmlDocument);
+            var node = xmlDocument.documentElement;
+            decoder.decode(node, graph.getModel());
+            var root = graph.getModel().getCell("2");
+            var cnt = 0;
+            graph.traverse(root, true, function (vertex) {
+                console.log("id: " + vertex.getId() + ", value: " + vertex.getValue());
+                if (cnt == 0)
+                    addFuntionButton(graph, vertex, false);
+                else
+                    addFuntionButton(graph, vertex, true);
 
-              cnt += 1;
-          });
+                cnt += 1;
+            });
 
 
-          location.href = "#";
-      }
+            location.href = "#";
+        }
     };
     xhttp.open("POST", "reader.php", true);
     xhttp.send(formData);

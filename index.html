@@ -93,8 +93,8 @@
         <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">
             <h6 class="collapse-header">Organization Components:</h6>
-            <a class="collapse-item" id="vertical">Vertical Orientation</a>
-            <a class="collapse-item" id="orizontal">Orizontal Orientation</a>
+            <a class="collapse-item" id="vertical" onclick="verticalOrgnization()">Vertical Orientation</a>
+            <a class="collapse-item" id="orizontal" onclick="orizzontalOrgnization()">Orizontal Orientation</a>
             <a class="collapse-item" id="org">MindMap Organization</a>
           </div>
         </div>
@@ -113,7 +113,7 @@
             <a class="collapse-item" id="undo">Undo</a>
             <a class="collapse-item" id="redo">Redo</a>
             <a class="collapse-item" id="print">Print</a>
-        </div>
+          </div>
       </li>
 
       <!-- Divider -->
@@ -269,12 +269,12 @@
               </div>
             </div>
           </div>
-          </div>
         </div>
       </div>
-
     </div>
-    <!-- /.container-fluid -->
+
+  </div>
+  <!-- /.container-fluid -->
 
   <!-- End of Main Content -->
 
@@ -319,27 +319,28 @@
     </div>
   </div>
   <div id="popupexport" class="overlay">
-      <div class="popup">
-        <h2>Export In...</h2>
-        <a class="close" href="#">×</a>
-        <div class="content">
-          <input type="image" src="img/local.png" alt="LocalStorage" width="64" height="64" onclick="downloadFile()"/>
-          <input class="g-savetodrive" type="image" src="img/googledrive.png" alt="GoogleDrive" width="64" height="64" data-src="/test/test.xml" data-filename="test.xml" data-sitename= 'Mind Map'/>
-          <input type="image" src="img/dropbox.png" alt="Dropbox" width="64" height="64" onclick="exportImage()"/>
-        </div>
+    <div class="popup">
+      <h2>Export In...</h2>
+      <a class="close" href="#">×</a>
+      <div class="content">
+        <input type="image" src="img/local.png" alt="LocalStorage" width="64" height="64" onclick="downloadFile()" />
+        <input class="g-savetodrive" type="image" src="img/googledrive.png" alt="GoogleDrive" width="64" height="64"
+          data-src="/test/test.xml" data-filename="test.xml" data-sitename='Mind Map' />
+        <input type="image" src="img/dropbox.png" alt="Dropbox" width="64" height="64" onclick="exportImage()" />
       </div>
+    </div>
   </div>
   <div id="popup2" class="overlay">
-      <div class="popup">
-        <h2>Insert Image...</h2>
-        <a class="close" href="#">×</a>
-        <div class="content">
-          <form enctype="multipart/form-data">
-            <input type="file" name="fileToUpload" id="fileToUpload" accept="image/*" multiple size="1">
-            <button type="button" onclick="exportFileImage()">Change Image</button>
-          </form>
-        </div>
+    <div class="popup">
+      <h2>Insert Image...</h2>
+      <a class="close" href="#">×</a>
+      <div class="content">
+        <form enctype="multipart/form-data">
+          <input type="file" name="fileToUpload" id="fileToUpload" accept="image/*" multiple size="1">
+          <button type="button" onclick="exportFileImage()">Change Image</button>
+        </form>
       </div>
+    </div>
   </div>
   <div id="popup3" class="overlay">
     <div class="popup">
@@ -353,7 +354,7 @@
         </form>
       </div>
     </div>
-</div>
+  </div>
 
   <!-- Bootstrap core JavaScript-->
   <script src="vendor/jquery/jquery.min.js"></script>
