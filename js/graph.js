@@ -102,6 +102,7 @@ function main(container) {
         var layout = new mxCompactTreeLayout(graph);
         document.getElementById("vertical").onclick = function () {
             verticalOrganizationLabel = false;
+            var children = getAllChildren(graph.getDefaultParent().children[0]);
             layout.horizontal = false;
             layout.execute(graph.getDefaultParent());
         }
@@ -111,7 +112,6 @@ function main(container) {
             verticalOrganizationLabel = true;
             var children = getAllChildren(graph.getDefaultParent().children[0]);
             layout.horizontal = true;
-            layout.execute(graph.getDefaultParent())
             for (var i = 1; i < children.length; i++) {
                 if (children[i].children != null) {
                     var pos = children[i].children[0].id;
@@ -119,6 +119,7 @@ function main(container) {
                     children[i].children[0] = graph.insertVertex(children[i], pos, pos, 0, -0.4, 0, 0, null, true);
                 }
             }
+            layout.execute(graph.getDefaultParent())
         }
 
         var organic = new mxFastOrganicLayout(graph);
@@ -176,7 +177,7 @@ function createPopupMenu(graph, menu, cell, evt) {
         });
 
         menu.addItem('Import', 'img/import.png', function () {
-            //var xml = mxUtils.getTextContent(read("/test/test.xml"));
+            //var xml = mxUtils.getTextContent(read("/test/Wed Mar 27 2019 15_29_16 GMT+0100 (CET).xml"));
             location.href = "#popup3";
             var xml = "<mxGraphModel><root><mxCell id=\"0\"/><mxCell id=\"1\" parent=\"0\"/><mxCell id=\"2\" value=\"TITLE\" style=\"image=img/logo.png\" vertex=\"1\" parent=\"1\"><mxGeometry x=\"187\" y=\"90\" width=\"140\" height=\"60\" as=\"geometry\"/></mxCell><mxCell id=\"3\" value=\"TITLE\" style=\"image=img/cloud.png\" vertex=\"1\" parent=\"1\"><mxGeometry x=\"300\" y=\"270\" width=\"140\" height=\"60\" as=\"geometry\"/></mxCell><mxCell id=\"4\" value=\"\" edge=\"1\" parent=\"1\" source=\"2\" target=\"3\"><mxGeometry relative=\"1\" as=\"geometry\"/></mxCell></root></mxGraphModel>";
             var xmlDocument = mxUtils.parseXml(xml);
@@ -281,6 +282,7 @@ function addLabelWithNode(cell, vertex, parent, pos) {
     return vertex;
 }
 
+//TODO: quando aggiungo i nodi devo vedere in che organizzazione sono e li aggiugno di conseguenza
 function addNode(graph, cell) {
     var model = graph.getModel();
     var parent = graph.getDefaultParent();
