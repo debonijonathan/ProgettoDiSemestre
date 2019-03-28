@@ -1,4 +1,5 @@
 var graph;
+var cellImage;
 var levelIsSetted = [false, false, false, false];
 var verticalOrganizationLabel = false;
 
@@ -150,20 +151,10 @@ function createPopupMenu(graph, menu, cell, evt) {
         });
 
         menu.addItem('Edit Image', 'img/image.png', function () {
-            //getFile('image/x-png,image/gif,image/jpeg');
-            //document.getElementById("cell").value = cell;
-            //document.getElementById("graph").value = graph;
-
             //Setto il nuovo stile per poter cambiare immagine
-            var model = graph.getModel();
-            var style = new Array();
-
-            style[mxConstants.STYLE_IMAGE] = 'img/image.png';
-
-            graph.stylesheet.putCellStyle('rounded', style);
-            model.setStyle(cell, 'rounded');
+            cellImage = cell;
             location.href = "#popup2";
-
+            
         });
 
         menu.addSeparator();
@@ -172,38 +163,18 @@ function createPopupMenu(graph, menu, cell, evt) {
         menu.addItem('Export', 'img/export.png', function () {
             var encoder = new mxCodec();
             var node = encoder.encode(graph.getModel());
-            alert(mxUtils.getXml(node));
             openForm();
         });
 
         menu.addItem('Import', 'img/import.png', function () {
             //var xml = mxUtils.getTextContent(read("/test/Wed Mar 27 2019 15_29_16 GMT+0100 (CET).xml"));
             location.href = "#popup3";
-            var xml = "<mxGraphModel><root><mxCell id=\"0\"/><mxCell id=\"1\" parent=\"0\"/><mxCell id=\"2\" value=\"TITLE\" style=\"image=img/logo.png\" vertex=\"1\" parent=\"1\"><mxGeometry x=\"187\" y=\"90\" width=\"140\" height=\"60\" as=\"geometry\"/></mxCell><mxCell id=\"3\" value=\"TITLE\" style=\"image=img/cloud.png\" vertex=\"1\" parent=\"1\"><mxGeometry x=\"300\" y=\"270\" width=\"140\" height=\"60\" as=\"geometry\"/></mxCell><mxCell id=\"4\" value=\"\" edge=\"1\" parent=\"1\" source=\"2\" target=\"3\"><mxGeometry relative=\"1\" as=\"geometry\"/></mxCell></root></mxGraphModel>";
-            var xmlDocument = mxUtils.parseXml(xml);
-            var decoder = new mxCodec(xmlDocument);
-            var node = xmlDocument.documentElement;
-            decoder.decode(node, graph.getModel());
-            var root = graph.getModel().getCell("2");
-            var cnt = 0;
-            graph.traverse(root, true, function (vertex) {
-                console.log("id: " + vertex.getId() + ", value: " + vertex.getValue());
-                if (cnt == 0)
-                    addFuntionButton(graph, vertex, false);
-                else
-                    addFuntionButton(graph, vertex, true);
-
-                cnt += 1;
-            });
+            
         });
     }
 
 };
 
-
-function changeStyleCell() {
-    alert("inserire l'immagine")
-}
 
 
 
@@ -402,9 +373,6 @@ function downloadFile() {
     saveAs(blob, d + ".xml");
 }
 
-function importXML() {
-
-}
 
 function openForm() {
     location.href = "#popupexport";
@@ -441,4 +409,57 @@ function getFile(accepted) {
     }
     //document.getElementById("demo").innerHTML = txt;
     return txt;
+}
+
+function exportFileImage(){
+    var file = document.getElementById("fileToUpload").files[0];
+    var formData = new FormData();
+    formData.append("fileToUpload",file);
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+      if (this.readyState == 4 && this.status == 200) {
+          var model = graph.getModel();
+          var style = new Array();
+          style[mxConstants.STYLE_IMAGE] = this.responseText;
+
+          graph.stylesheet.putCellStyle(this.responseText, style);
+          model.setStyle(cellImage, this.responseText);
+          location.href = "#";
+      }
+    };
+    xhttp.open("POST", "upload.php", true);
+    xhttp.send(formData);
+}
+
+function importXML() {
+    var file = document.getElementById("fileToUploadXML").files[0];
+    var formData = new FormData();
+    formData.append("fileToUpload",file);
+
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+      if (this.readyState == 4 && this.status == 200) {
+          var xml = this.responseText;
+          var xmlDocument = mxUtils.parseXml(xml);
+          var decoder = new mxCodec(xmlDocument);
+          var node = xmlDocument.documentElement;
+          decoder.decode(node, graph.getModel());
+          var root = graph.getModel().getCell("2");
+          var cnt = 0;
+          graph.traverse(root, true, function (vertex) {
+              console.log("id: " + vertex.getId() + ", value: " + vertex.getValue());
+              if (cnt == 0)
+                  addFuntionButton(graph, vertex, false);
+              else
+                  addFuntionButton(graph, vertex, true);
+
+              cnt += 1;
+          });
+
+
+          location.href = "#";
+      }
+    };
+    xhttp.open("POST", "reader.php", true);
+    xhttp.send(formData);
 }
