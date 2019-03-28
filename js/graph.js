@@ -1,6 +1,7 @@
 var graph;
 var levelIsSetted = [false, false, false, false];
 var verticalOrganizationLabel = false;
+var cnt = 0;
 
 function main(container) {
     // Checks if browser is supported
@@ -142,6 +143,28 @@ function main(container) {
     }
 }
 
+function orizzontalOrgnization() {
+    var layout = new mxCompactTreeLayout(graph);
+    verticalOrganizationLabel = true;
+    var children = getAllChildren(graph.getDefaultParent().children[0]);
+    layout.horizontal = true;
+    for (var i = 1; i < children.length; i++) {
+        if (children[i].children != null) {
+            var pos = children[i].children[0].id;
+            graph.removeCells(children[i].children);
+            children[i].children[0] = graph.insertVertex(children[i], pos, pos, 0, -0.4, 0, 0, null, true);
+        }
+    }
+    layout.execute(graph.getDefaultParent())
+}
+
+function verticalOrgnization() {
+    var layout = new mxCompactTreeLayout(graph);
+    verticalOrganizationLabel = false;
+    layout.horizontal = false;
+    layout.execute(graph.getDefaultParent());
+}
+
 // Function to create the entries in the popupmenu
 function createPopupMenu(graph, menu, cell, evt) {
     if (cell != null) {
@@ -273,7 +296,7 @@ function addFuntionButton(graph, cell, flagDelete) {
 
 function addLabelWithNode(cell, vertex, parent, pos) {
     //creo il vertice lo stesso e gli assegno l'id facendo id del padre + 1
-    vertex = graph.insertVertex(parent, null, 'TITLE', cell.geometry.x, cell.geometry.y + 150, 5, 5, 'image=img/cloud.png');
+    vertex = graph.insertVertex(parent, null, 'TITLE', 0, 0, 5, 5, 'image=img/cloud.png');
     //assegnamento id
     vertex.myId = cell.myId + 1;
     //se il livello in cui devo inserire la label per il livello è disponibile (cioè uguale a false) inserisco e setto a true l'array alla pos corrispndente
@@ -281,6 +304,9 @@ function addLabelWithNode(cell, vertex, parent, pos) {
     //ritorno il vertice che poi andrò ad aggiungere al mio graph
     return vertex;
 }
+
+
+
 
 //TODO: quando aggiungo i nodi devo vedere in che organizzazione sono e li aggiugno di conseguenza
 function addNode(graph, cell) {
@@ -302,8 +328,7 @@ function addNode(graph, cell) {
                 vertex = addLabelWithNode(cell, vertex, parent, 3);
                 break;
             default:
-                vertex = graph.insertVertex(parent, null, 'TITLE', cell.geometry.x, cell.geometry.y + 150, 5, 5, 'image=img/cloud.png');
-                console.log(parent);
+                vertex = graph.insertVertex(parent, null, 'TITLE', 0, 0, 5, 5, 'image=img/cloud.png');
         }
         //inseriemento del nodo vertex nel grafico
         graph.updateCellSize(vertex);
@@ -315,6 +340,11 @@ function addNode(graph, cell) {
     finally {
         model.endUpdate();
     }
+    if (verticalOrganizationLabel == false)
+        verticalOrgnization();
+    else
+        orizzontalOrgnization();
+
 }
 
 
