@@ -24,8 +24,9 @@ if ($uploadOk == 0) {
 // if everything is ok, try to upload file
 } else {
     if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
-
-        echo $target_file;
+        $myfile = fopen($target_file, "r") or die("Unable to open file!");
+        echo fread($myfile,filesize($target_file));
+        fclose($myfile);
     } else {
         echo "Sorry, there was an error uploading your file.";
     }
