@@ -136,6 +136,7 @@ function orizzontalOrgnization() {
     layout.execute(graph.getDefaultParent())
 }
 
+//TODO: posizionare le label in modo adeguato 
 function verticalOrgnization() {
     var layout = new mxCompactTreeLayout(graph);
 
@@ -160,7 +161,6 @@ function createPopupMenu(graph, menu, cell, evt) {
 
         menu.addSeparator();
 
-
         menu.addItem('Export', 'img/export.png', function () {
             var encoder = new mxCodec();
             var node = encoder.encode(graph.getModel());
@@ -173,7 +173,6 @@ function createPopupMenu(graph, menu, cell, evt) {
 
         });
     }
-
 };
 
 
