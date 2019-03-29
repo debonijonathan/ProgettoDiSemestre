@@ -120,27 +120,57 @@ function main(container) {
     }
 }
 
+function removeLabels(children) {
+    var pos = [];
+    var i = 0;
+
+    for (i = 1; i < children.length; i++)
+        if (children[i].children != null)
+            pos[cnt++] = children[i].children[0];
+    graph.removeCells(pos);
+
+    for (i = 0; i < pos.length; i++)
+        if (typeof (pos[i]) != "undefined") {
+            if (pos[i].value == "Level 2") {
+                levelIsSetted[1] = false;
+            } else if (pos[i].value == "Level 3") {
+                levelIsSetted[2] = false;
+            } else if (pos[i].value == "Level 4") {
+                levelIsSetted[3] = false;
+            }
+        }
+
+    return pos;
+}
+
+function addLabels(pos) {
+    for (var i = 0; i < pos.length; i++) {
+        printAllNodeAt(i + 1);
+    }
+}
+
 function orizzontalOrgnization() {
     var layout = new mxCompactTreeLayout(graph);
     var children = getAllChildren(graph.getDefaultParent().children[0]);
-
     verticalOrganizationLabel = true;
     layout.horizontal = true;
-    for (var i = 1; i < children.length; i++) {
-        if (children[i].children != null) {
-            var pos = children[i].children[0].id;
-            graph.removeCells(children[i].children);
-            children[i].children[0] = graph.insertVertex(children[i], pos, pos, 0, -0.4, 0, 0, null, true);
-        }
-    }
+    // for (var i = 1; i < children.length; i++) {
+    //     if (children[i].children != null) {
+    //         var pos = children[i].children[0].id;
+    //         graph.removeCells(children[i].children);
+    //         children[i].children[0] = graph.insertVertex(children[i], pos, pos, 0, -0.4, 0, 0, null, true);
+    //     }
+    // }
     layout.execute(graph.getDefaultParent())
 }
 
 //TODO: posizionare le label in modo adeguato 
 function verticalOrgnization() {
     var layout = new mxCompactTreeLayout(graph);
-
     verticalOrganizationLabel = false;
+    var children = getAllChildren(graph.getDefaultParent().children[0]);
+    var pos = removeLabels(children);
+    addLabels(pos);
     layout.horizontal = false;
     layout.execute(graph.getDefaultParent());
 }
@@ -295,6 +325,21 @@ function addNode(graph, cell) {
 
 }
 
+function organizzationMethod(value) {
+    switch (value) {
+        case 1:
+            verticalOrgnization();
+            break;
+        case 2:
+            orizzontalOrgnization();
+            break;
+        case 3:
+            verticalOrgnization();
+            break;
+        default:
+    }
+}
+
 
 function deleteChildrenHaveLabel(children, graph) {
     for (var i = 0; i < children.length; i++) {
@@ -323,9 +368,10 @@ function deleteChildrenHaveLabel(children, graph) {
 function addLabel(vertex, pos) {
     var x = -1;
     var y = 0.5;
+
     if (verticalOrganizationLabel == true) {
         x = 0;
-        y = -0.4;
+        y = -0.25;
     }
     if (levelIsSetted[pos] == false) {
         var stringId = 'Level ' + (pos + 1);
@@ -363,7 +409,6 @@ function printAllNodeAt(altezza) {
 function deleteNode(graph, cell) {
     // Salvo tutti i nodi figli di cell
     var children = getAllChildren(cell);
-
     // rimuovo tutti i figli
     graph.removeCells(children);
     //funzione per vedere quale label è stata cancellata e se è stata cancellata
