@@ -143,27 +143,21 @@ function addLabels(pos) {
 }
 
 function orizzontalOrganization() {
-    var layout = new mxCompactTreeLayout(graph);
-    var children = getAllChildren(graph.getDefaultParent().children[0]);
     verticalOrganizationLabel = true;
+    var children = getAllChildren(graph.getDefaultParent().children[0]);
+    var pos = removeLabels(children);
+    addLabels(pos);
+    var layout = new mxCompactTreeLayout(graph);
     layout.horizontal = true;
-    // for (var i = 1; i < children.length; i++) {
-    //     if (children[i].children != null) {
-    //         var pos = children[i].children[0].id;
-    //         graph.removeCells(children[i].children);
-    //         children[i].children[0] = graph.insertVertex(children[i], pos, pos, 0, -0.4, 0, 0, null, true);
-    //     }
-    // }
     layout.execute(graph.getDefaultParent())
 }
 
-//TODO: posizionare le label in modo adeguato 
 function verticalOrganization() {
-    var layout = new mxCompactTreeLayout(graph);
     verticalOrganizationLabel = false;
     var children = getAllChildren(graph.getDefaultParent().children[0]);
     var pos = removeLabels(children);
     addLabels(pos);
+    var layout = new mxCompactTreeLayout(graph);
     layout.horizontal = false;
     layout.execute(graph.getDefaultParent());
 }
