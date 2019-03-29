@@ -2,7 +2,7 @@ var graph;
 var cellImage;
 var levelIsSetted = [false, false, false, false];
 var verticalOrganizationLabel = false;
-var cnt = 0;
+var graphOrientation = 0;
 
 function main(container) {
     // Checks if browser is supported
@@ -116,6 +116,7 @@ function main(container) {
 function removeLabels(children) {
     var pos = [];
     var i = 0;
+    var cnt = 0;
 
     for (i = 1; i < children.length; i++)
         if (children[i].children != null)
@@ -143,7 +144,8 @@ function addLabels(pos) {
 }
 
 function orizzontalOrganization() {
-    verticalOrganizationLabel = true;
+    graphOrientation = 1;
+    //verticalOrganizationLabel = true;
     var children = getAllChildren(graph.getDefaultParent().children[0]);
     var pos = removeLabels(children);
     addLabels(pos);
@@ -153,7 +155,8 @@ function orizzontalOrganization() {
 }
 
 function verticalOrganization() {
-    verticalOrganizationLabel = false;
+    graphOrientation = 0;
+    //verticalOrganizationLabel = false;
     var children = getAllChildren(graph.getDefaultParent().children[0]);
     var pos = removeLabels(children);
     addLabels(pos);
@@ -163,6 +166,7 @@ function verticalOrganization() {
 }
 
 function mindmapOrganization() {
+    graphOrientation = 2;
     var organic = new mxFastOrganicLayout(graph);
     organic.forceConstant = 120;
     organic.execute(graph.getDefaultParent());
@@ -311,23 +315,24 @@ function addNode(graph, cell) {
     finally {
         model.endUpdate();
     }
-    if (verticalOrganizationLabel == false)
-        verticalOrganization();
-    else
-        orizzontalOrganization();
+    organizzationMethod(graphOrientation);
+    // if (verticalOrganizationLabel == false)
+    //     verticalOrganization();
+    // else
+    //     orizzontalOrganization();
 
 }
 
 function organizzationMethod(value) {
     switch (value) {
-        case 1:
+        case 0:
             verticalOrganization();
             break;
-        case 2:
+        case 1:
             orizzontalOrganization();
             break;
-        case 3:
-            verticalOrganization();
+        case 2:
+            mindmapOrganization();
             break;
         default:
     }
@@ -362,10 +367,17 @@ function addLabel(vertex, pos) {
     var x = -1;
     var y = 0.5;
 
-    if (verticalOrganizationLabel == true) {
+    if (graphOrientation == 1) {
         x = 0;
         y = -0.25;
+    } else if (graphOrientation == 2) {
+
     }
+
+    // if (verticalOrganizationLabel == true) {
+    //     x = 0;
+    //     y = -0.25;
+    // }
     if (levelIsSetted[pos] == false) {
         var stringId = 'Level ' + (pos + 1);
         var label = graph.insertVertex(vertex, stringId, 'Level ' + (pos + 1), x, y, 0, 0, null, true);
