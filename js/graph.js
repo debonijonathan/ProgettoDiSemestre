@@ -100,13 +100,6 @@ function main(container) {
             undoManager.undoableEditHappened(evt.getProperty('edit'));
         };
 
-        var organic = new mxFastOrganicLayout(graph);
-        organic.forceConstant = 120;
-
-        document.getElementById("org").onclick = function () {
-            organic.execute(graph.getDefaultParent());
-        }
-
         graph.getModel().addListener(mxEvent.UNDO, listener);
         graph.getView().addListener(mxEvent.UNDO, listener);
 
@@ -149,7 +142,7 @@ function addLabels(pos) {
     }
 }
 
-function orizzontalOrgnization() {
+function orizzontalOrganization() {
     var layout = new mxCompactTreeLayout(graph);
     var children = getAllChildren(graph.getDefaultParent().children[0]);
     verticalOrganizationLabel = true;
@@ -165,7 +158,7 @@ function orizzontalOrgnization() {
 }
 
 //TODO: posizionare le label in modo adeguato 
-function verticalOrgnization() {
+function verticalOrganization() {
     var layout = new mxCompactTreeLayout(graph);
     verticalOrganizationLabel = false;
     var children = getAllChildren(graph.getDefaultParent().children[0]);
@@ -173,6 +166,12 @@ function verticalOrgnization() {
     addLabels(pos);
     layout.horizontal = false;
     layout.execute(graph.getDefaultParent());
+}
+
+function mindmapOrganization() {
+    var organic = new mxFastOrganicLayout(graph);
+    organic.forceConstant = 120;
+    organic.execute(graph.getDefaultParent());
 }
 
 // Function to create the entries in the popupmenu
@@ -319,22 +318,22 @@ function addNode(graph, cell) {
         model.endUpdate();
     }
     if (verticalOrganizationLabel == false)
-        verticalOrgnization();
+        verticalOrganization();
     else
-        orizzontalOrgnization();
+        orizzontalOrganization();
 
 }
 
 function organizzationMethod(value) {
     switch (value) {
         case 1:
-            verticalOrgnization();
+            verticalOrganization();
             break;
         case 2:
-            orizzontalOrgnization();
+            orizzontalOrganization();
             break;
         case 3:
-            verticalOrgnization();
+            verticalOrganization();
             break;
         default:
     }
