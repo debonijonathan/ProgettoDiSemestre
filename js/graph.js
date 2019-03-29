@@ -143,26 +143,24 @@ function addLabels(pos) {
     }
 }
 
-function orizzontalOrganization() {
-    graphOrientation = 1;
-    //verticalOrganizationLabel = true;
-    var children = getAllChildren(graph.getDefaultParent().children[0]);
-    var pos = removeLabels(children);
-    addLabels(pos);
-    var layout = new mxCompactTreeLayout(graph);
-    layout.horizontal = true;
-    layout.execute(graph.getDefaultParent())
-}
-
 function verticalOrganization() {
     graphOrientation = 0;
-    //verticalOrganizationLabel = false;
     var children = getAllChildren(graph.getDefaultParent().children[0]);
     var pos = removeLabels(children);
     addLabels(pos);
     var layout = new mxCompactTreeLayout(graph);
     layout.horizontal = false;
     layout.execute(graph.getDefaultParent());
+}
+
+function orizzontalOrganization() {
+    graphOrientation = 1;
+    var children = getAllChildren(graph.getDefaultParent().children[0]);
+    var pos = removeLabels(children);
+    addLabels(pos);
+    var layout = new mxCompactTreeLayout(graph);
+    layout.horizontal = true;
+    layout.execute(graph.getDefaultParent())
 }
 
 function mindmapOrganization() {
@@ -316,11 +314,6 @@ function addNode(graph, cell) {
         model.endUpdate();
     }
     organizzationMethod(graphOrientation);
-    // if (verticalOrganizationLabel == false)
-    //     verticalOrganization();
-    // else
-    //     orizzontalOrganization();
-
 }
 
 function organizzationMethod(value) {
@@ -374,10 +367,6 @@ function addLabel(vertex, pos) {
 
     }
 
-    // if (verticalOrganizationLabel == true) {
-    //     x = 0;
-    //     y = -0.25;
-    // }
     if (levelIsSetted[pos] == false) {
         var stringId = 'Level ' + (pos + 1);
         var label = graph.insertVertex(vertex, stringId, 'Level ' + (pos + 1), x, y, 0, 0, null, true);
@@ -387,12 +376,10 @@ function addLabel(vertex, pos) {
 
 function getAllChildren(root) {
     var children = [];
-
     // Cerco tutti i nodi figli
     graph.traverse(root, true, function (vertex) {
         children.push(vertex);
     });
-
     return children;
 }
 
