@@ -1,7 +1,6 @@
 var graph;
 var cellImage;
 var levelIsSetted = [false, false, false, false];
-var verticalOrganizationLabel = false;
 var graphOrientation = 0;
 
 function main(container) {
