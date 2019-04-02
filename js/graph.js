@@ -3,6 +3,7 @@ var cellImage;
 var createCell;
 var levelIsSetted = [false, false, false, false];
 var graphOrientation = 0;
+var doc = mxUtils.createXmlDocument();
 
 function main(container) {
     // Checks if browser is supported
@@ -55,6 +56,7 @@ function main(container) {
             //id for level label
             var rootLabel = graph.insertVertex(root, null, 'Level 1', -1, 0.5, 0, 0, null, true);
             root.myId = 0;
+            root.todo = 0;
             levelIsSetted[0] = true;
             //inseriemento del nodo root nel grafico
             graph.updateCellSize(root);
@@ -265,23 +267,9 @@ function createPopupMenu(graph, menu, cell, evt) {
         if(!bool){
             menu.addItem('IsTODO', 'img/check.png', function () {
                 var v = graph.getSelectionCell();
-                // Creates a new overlay with an image and a tooltip
-                var overlay = new mxCellOverlay(
-                    new mxImage('img/checked.png', 20, 20),
-                    'Overlay Check');
-                overlay.align = mxConstants.ALIGN_RIGHT;
-                overlay.verticalAlign = mxConstants.ALIGN_CENTER;
-                // Installs a handler for clicks on the overlay							
-                overlay.addListener(mxEvent.CLICK, function(sender, evt2)
-                {
-                    graph.removeCellOverlays(v);
-                    if(v.getId() != 2)
-                        addFuntionButton(graph,v,true);
-                    else
-                        addFuntionButton(graph,v,false);
-                });
-                // Sets the overlay for the cell in the graph
-                graph.addCellOverlay(cell, overlay);    
+                if(v.todo == 0){
+                    addTodo(graph,v);
+                }
 
             });
 
@@ -315,7 +303,26 @@ function createPopupMenu(graph, menu, cell, evt) {
     }
 };
 
-
+function addTodo(graph,cell){
+    var overlay = new mxCellOverlay(
+        new mxImage('img/checked.png', 20, 20),
+        'Overlay Check');
+    overlay.align = mxConstants.ALIGN_RIGHT;
+    overlay.verticalAlign = mxConstants.ALIGN_CENTER;
+    // Installs a handler for clicks on the overlay							
+    overlay.addListener(mxEvent.CLICK, function(sender, evt2)
+    {
+        cell.todo = 0;
+        graph.removeCellOverlays(cell);
+        if(v.getId() != 2)
+            addFuntionButton(graph,cell,true);
+        else
+            addFuntionButton(graph,cell,false);
+    });
+    cell.todo = 1;
+    // Sets the overlay for the cell in the graph
+    graph.addCellOverlay(cell, overlay);    
+}
 
 
 function setStyle(style) {
@@ -417,6 +424,7 @@ function addNode(graph, cell) {
             default:
                 vertex = graph.insertVertex(parent, null, 'TITLE', 0, 0, 5, 5, 'image=img/cloud.png');
         }
+        vertex.todo = 0;
         //inseriemento del nodo vertex nel grafico
         graph.updateCellSize(vertex);
         createCell = vertex;
@@ -608,21 +616,25 @@ function importXML() {
 
             var cnt = 0;
             graph.traverse(root, true, function (vertex) {
-                console.log("id: " + vertex.getId() + ", value: " + vertex.getValue());
+                console.log("id: " + vertex.getId() + ", value: " + vertex.getValue() +", todo:" + vertex.todo);
                 if (cnt == 0)
                     addFuntionButton(graph, vertex, false);
                 else
                     addFuntionButton(graph, vertex, true);
+
+                if( vertex.todo == "1"){
+                    addTodo(graph,vertex);
+                }
                 cnt += 1;
             });
             graph.traverse(graph.getModel().getCell("1"), true, function (vertex) {
                 var string = vertex.getStyle();
+
                 try{
                     if(string.charAt() == "n"){
                         createStyleNote(graph,vertex,"note"+d);
                     }
                 }catch(err){
-
                 }
             });
             location.href = "#";
