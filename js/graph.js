@@ -68,6 +68,34 @@ function main(container) {
             return createPopupMenu(graph, menu, cell, evt);
         };
 
+
+        var keyHandler = new mxKeyHandler(graph);
+        keyHandler.bindKey(9, function(evt)
+        {
+        if (graph.isEnabled())
+        {
+                addNode(graph, graph.getModel().getCell(graph.getSelectionCell().getId()));
+        }
+        });
+        keyHandler.bindKey(13, function(evt)
+        {
+        if (graph.isEnabled())
+        { 
+            var parent = graph.getModel().getParent(graph.getSelectionCell());
+            if(parent.getId() != 1){
+                console.log(parent.getId());
+                addNode(graph, parent);
+            }
+        }
+        });
+        keyHandler.bindKey(46, function(evt)
+        {
+            if (graph.isEnabled())
+            {
+                graph.removeCells();
+            }
+        });
+
         document.getElementById("zoomIn").onclick = function () {
             graph.zoomIn();
         }
@@ -110,6 +138,10 @@ function main(container) {
             undoManager.redo();
         };
     }
+}
+
+function pressedKey(){
+    console.log("ciao");
 }
 
 function removeLabels(children) {
@@ -284,7 +316,6 @@ function addLabelWithNode(cell, vertex, parent, pos) {
 function addNode(graph, cell) {
     var model = graph.getModel();
     var parent = graph.getDefaultParent();
-
     model.beginUpdate();
     try {
         //inserimento del nodo nella posizione corretta con il livello corretto
