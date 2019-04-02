@@ -269,6 +269,13 @@ function createPopupMenu(graph, menu, cell, evt) {
                 var v = graph.getSelectionCell();
                 if(v.todo == 0){
                     addTodo(graph,v);
+                }else{
+                    cell.todo = 0;
+                    graph.removeCellOverlays(cell);
+                    if(v.getId() != 2)
+                        addFuntionButton(graph,cell,true);
+                    else
+                        addFuntionButton(graph,cell,false);
                 }
 
             });
