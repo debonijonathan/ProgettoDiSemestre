@@ -253,43 +253,53 @@ function mindmapOrganization() {
 // Function to create the entries in the popupmenu
 function createPopupMenu(graph, menu, cell, evt) {
     if (cell != null) {
+        var bool = false;
+        try{
+            if(cell.getStyle().charAt(0) == "n")
+                bool = true;
+            else
+                bool = false;
+        }catch(err){
+            bool = false;
+        }
+        if(!bool){
+            menu.addItem('IsTODO', 'img/check.png', function () {
+                var v = graph.getSelectionCell();
+                // Creates a new overlay with an image and a tooltip
+                var overlay = new mxCellOverlay(
+                    new mxImage('img/checked.png', 20, 20),
+                    'Overlay Check');
+                overlay.align = mxConstants.ALIGN_RIGHT;
+                overlay.verticalAlign = mxConstants.ALIGN_CENTER;
+                // Installs a handler for clicks on the overlay							
+                overlay.addListener(mxEvent.CLICK, function(sender, evt2)
+                {
+                    graph.removeCellOverlays(v);
+                    if(v.getId() != 2)
+                        addFuntionButton(graph,v,true);
+                    else
+                        addFuntionButton(graph,v,false);
+                });
+                // Sets the overlay for the cell in the graph
+                graph.addCellOverlay(cell, overlay);    
 
-        menu.addItem('IsTODO', 'img/check.png', function () {
-			var v = graph.getSelectionCell();
-            // Creates a new overlay with an image and a tooltip
-            var overlay = new mxCellOverlay(
-                new mxImage('img/checked.png', 20, 20),
-                'Overlay Check');
-            overlay.align = mxConstants.ALIGN_RIGHT;
-            overlay.verticalAlign = mxConstants.ALIGN_CENTER;
-            // Installs a handler for clicks on the overlay							
-            overlay.addListener(mxEvent.CLICK, function(sender, evt2)
-            {
-                graph.removeCellOverlays(v);
-                if(v.getId() != 2)
-                    addFuntionButton(graph,v,true);
-                else
-                    addFuntionButton(graph,v,false);
             });
-            // Sets the overlay for the cell in the graph
-            graph.addCellOverlay(cell, overlay);    
 
-        });
+            menu.addSeparator();
 
-        menu.addSeparator();
+            menu.addItem('Edit label', 'img/pencil.png', function () {
+                graph.startEditingAtCell(cell);
+            });
 
-        menu.addItem('Edit label', 'img/pencil.png', function () {
-            graph.startEditingAtCell(cell);
-        });
+            menu.addItem('Edit Image', 'img/image.png', function () {
+                //Setto il nuovo stile per poter cambiare immagine
+                cellImage = cell;
+                location.href = "#popup2";
 
-        menu.addItem('Edit Image', 'img/image.png', function () {
-            //Setto il nuovo stile per poter cambiare immagine
-            cellImage = cell;
-            location.href = "#popup2";
+            });
 
-        });
-
-        menu.addSeparator();
+            menu.addSeparator();
+        }
 
         menu.addItem('Export', 'img/export.png', function () {
             var encoder = new mxCodec();
