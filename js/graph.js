@@ -313,19 +313,9 @@ function createPopupMenu(graph, menu, cell, evt) {
 function addTodo(graph,cell){
     var overlay = new mxCellOverlay(
         new mxImage('img/checked.png', 20, 20),
-        'Overlay Check');
+        'Checked');
     overlay.align = mxConstants.ALIGN_RIGHT;
     overlay.verticalAlign = mxConstants.ALIGN_CENTER;
-    // Installs a handler for clicks on the overlay							
-    overlay.addListener(mxEvent.CLICK, function(sender, evt2)
-    {
-        cell.todo = 0;
-        graph.removeCellOverlays(cell);
-        if(v.getId() != 2)
-            addFuntionButton(graph,cell,true);
-        else
-            addFuntionButton(graph,cell,false);
-    });
     cell.todo = 1;
     // Sets the overlay for the cell in the graph
     graph.addCellOverlay(cell, overlay);    
