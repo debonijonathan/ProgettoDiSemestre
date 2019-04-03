@@ -86,8 +86,7 @@ function main(container) {
         {
         if (graph.isEnabled())
         { 
-            var parent = graph.getModel().getParent(graph.getSelectionCell());
-            console.log(parent.getId());
+            var parent = graph.getModel().getCell(graph.getSelectionCell().myparent);
 
             if(parent.getId() != 1){
                 console.log(parent.getId());
@@ -422,6 +421,7 @@ function addNode(graph, cell) {
                 vertex = graph.insertVertex(parent, null, 'TITLE', 0, 0, 5, 5, 'image=img/cloud.png');
         }
         vertex.todo = 0;
+        vertex.myparent = cell.getId();
         //inseriemento del nodo vertex nel grafico
         graph.updateCellSize(vertex);
         createCell = vertex;
