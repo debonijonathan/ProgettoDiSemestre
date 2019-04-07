@@ -148,14 +148,28 @@ function main(container) {
             undoManager.redo();
         };
 
+        document.getElementById("defaultStyle").onclick = function () {
+            changeStyle(style, setStyle(style));
+        }
+
         document.getElementById("style2").onclick = function () {
-            // graph.getModel().beginUpdate();
-            // try {
-            //     var style2 = graph.getStylesheet().getDefaultVertexStyle();
-            //     setStyle2(style2);
-            // } finally {
-            //     graph.getModel().endUpdate();
-            // }
+            changeStyle(style, setStyle2(style));
+        }
+
+        document.getElementById("style3").onclick = function () {
+            changeStyle(style, setStyle3(style));
+        }
+    }
+}
+
+function changeStyle(style, callback) {
+    var children = getAllChildren(graph.getDefaultParent().children[0]);
+    if (children != null) {
+        if (callback && typeof callback === 'function')
+            callback();
+        if (style != null) {
+            for (var i = 0; i < children.length; i++)
+                graph.getModel().setStyle(children[i], style);
         }
     }
 }
@@ -365,12 +379,15 @@ function setStyle2(style) {
     style[mxConstants.STYLE_FILLCOLOR] = "#A6B8CE";
     style[mxConstants.STYLE_STROKECOLOR] = "#7591b3";//original
     style[mxConstants.STYLE_STROKEWIDTH] = 1;
-    //style[mxConstants.STYLE_PERIMETER] = mxPerimeter.RectanglePerimeter;
+    style[mxConstants.STYLE_PERIMETER] = mxPerimeter.RectanglePerimeter;
 
 }
 
-function setStyle3() {
-
+function setStyle3(style) {
+    console.log('Entro');
+    style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_RECTANGLE;
+    style[mxConstants.STYLE_OPACITY] = 50;
+    style[mxConstants.STYLE_FONTCOLOR] = '#774400';
 }
 
 function setEdgeStyle(style) {
