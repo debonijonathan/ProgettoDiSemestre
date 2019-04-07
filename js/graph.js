@@ -75,31 +75,27 @@ function main(container) {
         };
 
         var keyHandler = new mxKeyHandler(graph);
-        keyHandler.bindKey(9, function(evt)
-        {
-        if (graph.isEnabled())
-        {
+        keyHandler.bindKey(9, function (evt) {
+            if (graph.isEnabled()) {
                 addNode(graph, graph.getModel().getCell(graph.getSelectionCell().getId()));
-        }
-        });
-        keyHandler.bindKey(13,  function( evt)
-        {
-        if (graph.isEnabled())
-        { 
-            var parent = graph.getModel().getCell(graph.getSelectionCell().myparent);
-
-            if(parent.getId() != 1){
-                console.log(parent.getId());
-                addNode(graph, parent);
             }
-        }
         });
-        keyHandler.bindKey(46, function(evt)
-        {
-            if (graph.isEnabled())
-            {
-                if(graph.getSelectionCell().getId() != 2)
-                    graph.removeCells();
+        keyHandler.bindKey(13, function (evt) {
+            if (graph.isEnabled()) {
+                var parent = graph.getModel().getCell(graph.getSelectionCell().myparent);
+                if (parent.getId() != 1) {
+                    console.log(parent.getId());
+                    addNode(graph, parent);
+                }
+            }
+        });
+        keyHandler.bindKey(46, function (evt) {
+            var parent = graph.getModel().getCell(graph.getSelectionCell().getId());
+            if (graph.isEnabled()) {
+                if (graph.getSelectionCell().getId() != 2) {
+                    deleteNode(graph, parent);
+                    //graph.removeCells();
+                }
             }
         });
 
@@ -129,13 +125,11 @@ function main(container) {
         }
 
         document.getElementById("note").onclick = function () {
-            addNode(graph,graph.getDefaultParent());
-            createStyleNote(graph,createCell,"note");
+            addNode(graph, graph.getDefaultParent());
+            createStyleNote(graph, createCell, "note");
             console.log(createCell.getId());
             graph.removeCellOverlays(createCell);
-
         }
-
 
         //edit manager
         var undoManager = new mxUndoManager();
@@ -153,10 +147,20 @@ function main(container) {
         document.getElementById("redo").onclick = function () {
             undoManager.redo();
         };
+
+        document.getElementById("style2").onclick = function () {
+            // graph.getModel().beginUpdate();
+            // try {
+            //     var style2 = graph.getStylesheet().getDefaultVertexStyle();
+            //     setStyle2(style2);
+            // } finally {
+            //     graph.getModel().endUpdate();
+            // }
+        }
     }
 }
 
-function pressedKey(){
+function pressedKey() {
     console.log("ciao");
 }
 
@@ -184,13 +188,12 @@ function removeLabels(children) {
     return pos;
 }
 
-function createStyleNote(graph,cell,name){
+function createStyleNote(graph, cell, name) {
     var model = graph.getModel();
     var style = new Array();
     style[mxConstants.STYLE_GRADIENTCOLOR] = '#ffffff';
     style[mxConstants.STYLE_STROKECOLOR] = '#000000';
     style[mxConstants.STYLE_FILLCOLOR] = '#ffffff';
-
 
     style[mxConstants.STYLE_SHAPE] = 'cloud';
 
@@ -255,26 +258,26 @@ function mindmapOrganization() {
 function createPopupMenu(graph, menu, cell, evt) {
     if (cell != null) {
         var bool = false;
-        try{
-            if(cell.getStyle().charAt(0) == "n")
+        try {
+            if (cell.getStyle().charAt(0) == "n")
                 bool = true;
             else
                 bool = false;
-        }catch(err){
+        } catch (err) {
             bool = false;
         }
-        if(!bool){
+        if (!bool) {
             menu.addItem('IsTODO', 'img/check.png', function () {
                 var v = graph.getSelectionCell();
-                if(v.todo == 0){
-                    addTodo(graph,v);
-                }else{
+                if (v.todo == 0) {
+                    addTodo(graph, v);
+                } else {
                     cell.todo = 0;
                     graph.removeCellOverlays(cell);
-                    if(v.getId() != 2)
-                        addFuntionButton(graph,cell,true);
+                    if (v.getId() != 2)
+                        addFuntionButton(graph, cell, true);
                     else
-                        addFuntionButton(graph,cell,false);
+                        addFuntionButton(graph, cell, false);
                 }
 
             });
@@ -289,7 +292,6 @@ function createPopupMenu(graph, menu, cell, evt) {
                 //Setto il nuovo stile per poter cambiare immagine
                 cellImage = cell;
                 location.href = "#popup2";
-
             });
 
             menu.addSeparator();
@@ -304,12 +306,11 @@ function createPopupMenu(graph, menu, cell, evt) {
         menu.addItem('Import', 'img/import.png', function () {
             //var xml = mxUtils.getTextContent(read("/test/Wed Mar 27 2019 15_29_16 GMT+0100 (CET).xml"));
             location.href = "#popup3";
-
         });
     }
 };
 
-function addTodo(graph,cell){
+function addTodo(graph, cell) {
     var overlay = new mxCellOverlay(
         new mxImage('img/checked.png', 20, 20),
         'Checked');
@@ -317,15 +318,14 @@ function addTodo(graph,cell){
     overlay.verticalAlign = mxConstants.ALIGN_CENTER;
     cell.todo = 1;
     // Sets the overlay for the cell in the graph
-    graph.addCellOverlay(cell, overlay);    
+    graph.addCellOverlay(cell, overlay);
 }
-
 
 function setStyle(style) {
     //Rettangolo per definire un nodo
     style[mxConstants.STYLE_SHAPE] = 'label';
 
-    //Il nostro testo di troverà in mezzo (in verticale)
+    //Il nostro testo si troverà in mezzo (in verticale)
     style[mxConstants.STYLE_VERTICAL_ALIGN] = mxConstants.ALIGN_MIDDLE;
     //Il nostro testo verrà allineato a sinistra (in orizzontale)
     style[mxConstants.STYLE_ALIGN] = mxConstants.ALIGN_LEFT;
@@ -356,6 +356,23 @@ function setStyle(style) {
     style[mxConstants.STYLE_IMAGE_HEIGHT] = '30';
 }
 
+function setStyle2(style) {
+    console.log('Entro');
+    style[mxConstants.STYLE_FONTFAMILY] = "Salesforce Sans";
+    style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_CLOUD;
+    style[mxConstants.STYLE_FOLDABLE] = 0;
+    style[mxConstants.STYLE_ARCSIZE] = 9;
+    style[mxConstants.STYLE_FILLCOLOR] = "#A6B8CE";
+    style[mxConstants.STYLE_STROKECOLOR] = "#7591b3";//original
+    style[mxConstants.STYLE_STROKEWIDTH] = 1;
+    //style[mxConstants.STYLE_PERIMETER] = mxPerimeter.RectanglePerimeter;
+
+}
+
+function setStyle3() {
+
+}
+
 function setEdgeStyle(style) {
     style[mxConstants.STYLE_STROKEWIDTH] = 3;
     style[mxConstants.STYLE_STROKECOLOR] = '#000000';
@@ -371,7 +388,6 @@ function addFuntionButton(graph, cell, flagDelete) {
         addNode(graph, cell);
     }));
 
-
     if (flagDelete) {
         var deleteOverlay = new mxCellOverlay(new mxImage('img/delete.png', 20, 20), 'Add');
         deleteOverlay.cursor = 'hand';
@@ -381,7 +397,6 @@ function addFuntionButton(graph, cell, flagDelete) {
         deleteOverlay.addListener(mxEvent.CLICK, mxUtils.bind(this, function (sender, evt) {
             deleteNode(graph, cell);
         }));
-
     }
 }
 
@@ -436,6 +451,7 @@ function addNode(graph, cell) {
     organizzationMethod(graphOrientation);
 }
 
+//metodi per vedere quale tipo di organizzazione è stata scelta
 function organizzationMethod(value) {
     switch (value) {
         case 0:
@@ -448,6 +464,7 @@ function organizzationMethod(value) {
             mindmapOrganization();
             break;
         default:
+            console.log('Errore');
     }
 }
 
@@ -525,7 +542,8 @@ function deleteNode(graph, cell) {
     graph.removeCells(children);
     //funzione per vedere quale label è stata cancellata e se è stata cancellata
     deleteChildrenHaveLabel(children, graph);
-
+    //richiamo la funzione per riordianare il grafico dopo che il nodod è stato eliminato
+    organizzationMethod(graphOrientation);
     return children;
 }
 
@@ -613,25 +631,25 @@ function importXML() {
 
             var cnt = 0;
             graph.traverse(root, true, function (vertex) {
-                console.log("id: " + vertex.getId() + ", value: " + vertex.getValue() +", todo:" + vertex.todo);
+                console.log("id: " + vertex.getId() + ", value: " + vertex.getValue() + ", todo:" + vertex.todo);
                 if (cnt == 0)
                     addFuntionButton(graph, vertex, false);
                 else
                     addFuntionButton(graph, vertex, true);
 
-                if( vertex.todo == "1"){
-                    addTodo(graph,vertex);
+                if (vertex.todo == "1") {
+                    addTodo(graph, vertex);
                 }
                 cnt += 1;
             });
             graph.traverse(graph.getModel().getCell("1"), true, function (vertex) {
                 var string = vertex.getStyle();
 
-                try{
-                    if(string.charAt() == "n"){
-                        createStyleNote(graph,vertex,"note"+d);
+                try {
+                    if (string.charAt() == "n") {
+                        createStyleNote(graph, vertex, "note" + d);
                     }
-                }catch(err){
+                } catch (err) {
                 }
             });
             location.href = "#";
