@@ -105,9 +105,13 @@ function main(container) {
         //Aggiunta del nodo allo stesso livello di quello selezionato
         keyHandler.bindKey(46, function (evt) {
             var parent = graph.getModel().getCell(graph.getSelectionCell().getId());
+            console.log(parent.style);
             if (graph.isEnabled()) {
                 if (graph.getSelectionCell().getId() != 2) {
-                    deleteNode(graph, parent);
+                    if (parent.style == "note") {
+                        graph.getModel().remove(parent);
+                    } else
+                        deleteNode(graph, parent);
                 }
             }
         });
@@ -163,11 +167,11 @@ function main(container) {
         }
 
         document.getElementById("style2").onclick = function () {
-            changeStyle(setStyle2(style));
+            //changeStyle(setStyle2());
         }
 
         document.getElementById("style3").onclick = function () {
-            changeStyle(setStyle2(style));
+            changeStyle(setStyle3());
         }
     }
 }
@@ -175,11 +179,28 @@ function main(container) {
 function changeStyle(callback) {
     graph.getModel().beginUpdate();
     try {
+        if (callback && typeof callback === 'function')
+            callback();
+    } finally {
+        graph.getModel().endUpdate();
+        graph.refresh();
+    }
+}
+
+function changeStyle2() {
+    graph.getModel().beginUpdate();
+    try {
         var children = getAllChildren(graph.getDefaultParent().children[0]);
         if (children != null) {
-            if (callback && typeof callback === 'function')
-                for (var i = 0; i < children.length; i++)
-                    graph.getModel().setStyle(children[i], callback());
+            for (var i = 1; i < children.length; i++) {
+                if (children[i].id != 2) {
+                    var style = graph.getModel().getStyle(children[i]);
+                    var newStyle = mxUtils.setStyle('style', mxConstants.STYLE_STROKECOLOR, 'green');
+                    var cs = new Array();
+                    cs[0] = children[i];
+                    graph.setCellStyle(newStyle, cs);
+                }
+            }
         }
     } finally {
         graph.getModel().endUpdate();
