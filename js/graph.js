@@ -149,28 +149,31 @@ function main(container) {
         };
 
         document.getElementById("defaultStyle").onclick = function () {
-            changeStyle(style, setStyle(style));
+            changeStyle(setStyle(style));
         }
 
         document.getElementById("style2").onclick = function () {
-            changeStyle(style, setStyle2(style));
+            changeStyle(setStyle2(style));
         }
 
         document.getElementById("style3").onclick = function () {
-            changeStyle(style, setStyle3(style));
+            changeStyle(setStyle2(style));
         }
     }
 }
 
-function changeStyle(style, callback) {
-    var children = getAllChildren(graph.getDefaultParent().children[0]);
-    if (children != null) {
-        if (callback && typeof callback === 'function')
-            callback();
-        if (style != null) {
-            for (var i = 0; i < children.length; i++)
-                graph.getModel().setStyle(children[i], style);
+function changeStyle(callback) {
+    graph.getModel().beginUpdate();
+    try {
+        var children = getAllChildren(graph.getDefaultParent().children[0]);
+        if (children != null) {
+            if (callback && typeof callback === 'function')
+                for (var i = 0; i < children.length; i++)
+                    graph.getModel().setStyle(children[i], callback());
         }
+    } finally {
+        graph.getModel().endUpdate();
+        graph.refresh();
     }
 }
 
@@ -241,6 +244,8 @@ function addLabels(pos) {
     }
 }
 
+//funzione per l'ordinamento delle grafico in modo verticale
+// e sistemazione delle label nel posto giusto
 function verticalOrganization() {
     graphOrientation = 0;
     var children = getAllChildren(graph.getDefaultParent().children[0]);
@@ -251,6 +256,8 @@ function verticalOrganization() {
     layout.execute(graph.getDefaultParent());
 }
 
+//funzione per l'ordinamento delle grafico in modo orizzontale
+// e sistemazione delle label nel posto giusto
 function orizzontalOrganization() {
     graphOrientation = 1;
     var children = getAllChildren(graph.getDefaultParent().children[0]);
@@ -261,6 +268,8 @@ function orizzontalOrganization() {
     layout.execute(graph.getDefaultParent())
 }
 
+//funzione per l'ordinamento delle grafico in modo mindmap
+// e sistemazione delle label nel posto giusto
 function mindmapOrganization() {
     graphOrientation = 2;
     var organic = new mxFastOrganicLayout(graph);
@@ -371,7 +380,6 @@ function setStyle(style) {
 }
 
 function setStyle2(style) {
-    console.log('Entro');
     style[mxConstants.STYLE_FONTFAMILY] = "Salesforce Sans";
     style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_CLOUD;
     style[mxConstants.STYLE_FOLDABLE] = 0;
@@ -384,10 +392,9 @@ function setStyle2(style) {
 }
 
 function setStyle3(style) {
-    console.log('Entro');
-    style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_RECTANGLE;
-    style[mxConstants.STYLE_OPACITY] = 50;
-    style[mxConstants.STYLE_FONTCOLOR] = '#774400';
+    // style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_RECTANGLE;
+    // style[mxConstants.STYLE_OPACITY] = 50;
+    // style[mxConstants.STYLE_FONTCOLOR] = '#774400';
 }
 
 function setEdgeStyle(style) {
@@ -417,6 +424,7 @@ function addFuntionButton(graph, cell, flagDelete) {
     }
 }
 
+//funzione per aggiungere una label ad uno nodo che dovrebbe averla
 function addLabelWithNode(cell, vertex, parent, pos) {
     //creo il vertice lo stesso e gli assegno l'id facendo id del padre + 1
     vertex = graph.insertVertex(parent, null, 'TITLE', 0, 0, 5, 5, 'image=img/cloud.png');
@@ -428,10 +436,8 @@ function addLabelWithNode(cell, vertex, parent, pos) {
     return vertex;
 }
 
-
-
-
-//TODO: quando aggiungo i nodi devo vedere in che organizzazione sono e li aggiugno di conseguenza
+//aggiungo i nodi nel caso in cui debbano essere aggiunte delle label li aggiungo con esse,
+//altrimenti senza di esse.
 function addNode(graph, cell) {
     var model = graph.getModel();
     var parent = graph.getDefaultParent();
@@ -465,6 +471,7 @@ function addNode(graph, cell) {
     finally {
         model.endUpdate();
     }
+    //una volta aggiunti i nodi richiamo la funzione giusta per organizare il grafico di conseguenza
     organizzationMethod(graphOrientation);
 }
 
@@ -485,7 +492,8 @@ function organizzationMethod(value) {
     }
 }
 
-
+//funzione per eliminare le lable da un nodo scorrendo i figli, una volta eliminate rimetto 
+//la posizione coretta dell'array booleano a false
 function deleteChildrenHaveLabel(children, graph) {
     for (var i = 0; i < children.length; i++) {
         if (children[i].children != null) {
@@ -528,6 +536,7 @@ function addLabel(vertex, pos) {
     }
 }
 
+//funzione per cercare tutti i figli di un nodo
 function getAllChildren(root) {
     var children = [];
     // Cerco tutti i nodi figli
@@ -551,7 +560,7 @@ function printAllNodeAt(altezza) {
     }
 }
 
-
+//funzione per cancellare un nodo e anche i suoi sotto figli se ne ha
 function deleteNode(graph, cell) {
     // Salvo tutti i nodi figli di cell
     var children = getAllChildren(cell);
