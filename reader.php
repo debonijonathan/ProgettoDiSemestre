@@ -1,4 +1,14 @@
 <?php
+/*****************************************************
+ * Nome: reader.php
+ * 
+ * Autori: J. De Boni, G. Zorloni  
+ * 
+ * Descrizione: Tramite questo programma si può
+ * salvare nel proprio server i file xml e ritorna
+ * il contenuto xml.
+ * 
+ ******************************************************/
 
 $target_dir = "uploads/";
 date_default_timezone_set(date_default_timezone_get());
@@ -7,21 +17,21 @@ $uploadOk = 1;
 $imageFileType = strtolower(pathinfo(basename($_FILES["fileToUpload"]["name"]),PATHINFO_EXTENSION));
 $target_file = $target_dir .$date.".".$imageFileType;
 
-// Check if file already exists
+// controllo se il file già esiste
 if (file_exists($target_file)) {
     echo "Sorry, file already exists.";
     $uploadOk = 0;
 }
-// Check file size
+// controllo la dimensione del file
 if ($_FILES["fileToUpload"]["size"] > 500000) {
     echo "Sorry, your file is too large.";
     $uploadOk = 0;
 }
 
-// Check if $uploadOk is set to 0 by an error
+// controllo se $uploadOk è impostato su 0 quindi produce un errore
 if ($uploadOk == 0) {
     echo "Sorry, your file was not uploaded.";
-// if everything is ok, try to upload file
+// se tutto è corretto, prova a fare upload
 } else {
     if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
         $myfile = fopen($target_file, "r") or die("Unable to open file!");

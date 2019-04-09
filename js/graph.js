@@ -1,3 +1,14 @@
+/*****************************************************
+ * Nome: graph.js
+ * 
+ * Autori: J. De Boni, G. Zorloni  
+ * 
+ * Descrizione: Tramite questo programma si può
+ * creare una mindmap con la quale gestire/manipolare
+ * i propri progetti e le proprie idee.
+ * 
+ ******************************************************/
+
 var graph;
 var cellImage;
 var createCell;
@@ -5,6 +16,7 @@ var levelIsSetted = [false, false, false, false];
 var graphOrientation = 0;
 var doc = mxUtils.createXmlDocument();
 
+//funzione per la creazione/manipolazione del grafico 
 function main(container) {
     // Checks if browser is supported
     if (!mxClient.isBrowserSupported()) {
@@ -26,7 +38,6 @@ function main(container) {
         var outline = document.getElementById('outlineContainer')
 
         var outln = new mxOutline(graph, outline);
-        // fine
 
         // Impostazione dello stile di default dei nodi
         var style = graph.getStylesheet().getDefaultVertexStyle();
@@ -35,8 +46,6 @@ function main(container) {
         // Impostazione dello stile di default dei collegamenti ai nodi
         var edgeStyle = graph.getStylesheet().getDefaultEdgeStyle();
         setEdgeStyle(edgeStyle);
-
-        //setAutoCreate(graph);
 
         //Impostiamo la scala minima a 1
         graph.cellRenderer.getTextScale = function (state) {
@@ -73,36 +82,37 @@ function main(container) {
         graph.popupMenuHandler.factoryMethod = function (menu, cell, evt) {
             return createPopupMenu(graph, menu, cell, evt);
         };
-
+        // Aggiunta del handler per la tastiera
         var keyHandler = new mxKeyHandler(graph);
+
+        //Aggiunta del nodo tramite tasto tab
         keyHandler.bindKey(9, function (evt) {
             if (graph.isEnabled()) {
                 addNode(graph, graph.getModel().getCell(graph.getSelectionCell().getId()));
             }
         });
+
+        //Aggiunta del nodo tramite tasto enter
         keyHandler.bindKey(13, function (evt) {
             if (graph.isEnabled()) {
                 var parent = graph.getModel().getCell(graph.getSelectionCell().myparent);
                 if (parent.getId() != 1) {
-                    console.log(parent.getId());
                     addNode(graph, parent);
                 }
             }
         });
+
+        //Aggiunta del nodo allo stesso livello di quello selezionato
         keyHandler.bindKey(46, function (evt) {
             var parent = graph.getModel().getCell(graph.getSelectionCell().getId());
             if (graph.isEnabled()) {
                 if (graph.getSelectionCell().getId() != 2) {
                     deleteNode(graph, parent);
-                    //graph.removeCells();
                 }
             }
         });
 
-        document.getElementById("zoomIn").onclick = function () {
-            graph.zoomIn();
-        }
-
+        //Zoom nel grafico
         document.getElementById("zoomIn").onclick = function () {
             graph.zoomIn();
         }
@@ -161,7 +171,7 @@ function main(container) {
         }
     }
 }
-
+//funzione per il cambiamento dello stile 
 function changeStyle(callback) {
     graph.getModel().beginUpdate();
     try {
@@ -177,10 +187,7 @@ function changeStyle(callback) {
     }
 }
 
-function pressedKey() {
-    console.log("ciao");
-}
-
+//funzione per la rimozione delle label nei figli
 function removeLabels(children) {
     var pos = [];
     var i = 0;
@@ -237,7 +244,7 @@ function createStyleNote(graph, cell, name) {
     graph.stylesheet.putCellStyle(name, style);
     model.setStyle(cell, name);
 }
-
+//funzione per l'aggiunta delle label nei nodi
 function addLabels(pos) {
     for (var i = 0; i < pos.length; i++) {
         printAllNodeAt(i + 1);
@@ -277,7 +284,7 @@ function mindmapOrganization() {
     organic.execute(graph.getDefaultParent());
 }
 
-// Function to create the entries in the popupmenu
+// funzione per la creazione del popupmenu alla pressione del tasto destro
 function createPopupMenu(graph, menu, cell, evt) {
     if (cell != null) {
         var bool = false;
@@ -291,6 +298,7 @@ function createPopupMenu(graph, menu, cell, evt) {
         }
         if (!bool) {
             menu.addItem('IsTODO', 'img/check.png', function () {
+                //Creazione del todo per la cella corrente
                 var v = graph.getSelectionCell();
                 if (v.todo == 0) {
                     addTodo(graph, v);
@@ -308,6 +316,7 @@ function createPopupMenu(graph, menu, cell, evt) {
             menu.addSeparator();
 
             menu.addItem('Edit label', 'img/pencil.png', function () {
+                //Setto la label in modo da editarlo
                 graph.startEditingAtCell(cell);
             });
 
@@ -327,12 +336,12 @@ function createPopupMenu(graph, menu, cell, evt) {
         });
 
         menu.addItem('Import', 'img/import.png', function () {
-            //var xml = mxUtils.getTextContent(read("/test/Wed Mar 27 2019 15_29_16 GMT+0100 (CET).xml"));
             location.href = "#popup3";
         });
     }
 };
 
+//funzione per l'aggiunta/gestione del todo
 function addTodo(graph, cell) {
     var overlay = new mxCellOverlay(
         new mxImage('img/checked.png', 20, 20),
@@ -340,10 +349,11 @@ function addTodo(graph, cell) {
     overlay.align = mxConstants.ALIGN_RIGHT;
     overlay.verticalAlign = mxConstants.ALIGN_CENTER;
     cell.todo = 1;
-    // Sets the overlay for the cell in the graph
+    // impostiamo l'overlay per le celle nel grafico
     graph.addCellOverlay(cell, overlay);
 }
 
+//funzione per l'aggiunta dello stile di default
 function setStyle(style) {
     //Rettangolo per definire un nodo
     style[mxConstants.STYLE_SHAPE] = 'label';
@@ -402,6 +412,7 @@ function setEdgeStyle(style) {
     style[mxConstants.STYLE_STROKECOLOR] = '#000000';
 }
 
+//funzione per poter visualizzare il pulsante elimina e aggiungi nodo
 function addFuntionButton(graph, cell, flagDelete) {
     var addOverlay = new mxCellOverlay(new mxImage('img/add.png', 20, 20), 'Add');
     addOverlay.cursor = 'hand';
@@ -411,7 +422,7 @@ function addFuntionButton(graph, cell, flagDelete) {
     addOverlay.addListener(mxEvent.CLICK, mxUtils.bind(this, function (sender, evt) {
         addNode(graph, cell);
     }));
-
+    //se non è il primo allora metti il flag per poterlo cancellare
     if (flagDelete) {
         var deleteOverlay = new mxCellOverlay(new mxImage('img/delete.png', 20, 20), 'Add');
         deleteOverlay.cursor = 'hand';
@@ -573,20 +584,23 @@ function deleteNode(graph, cell) {
     return children;
 }
 
+//funzione per creare il file xml e permettere il download
 function downloadFile() {
     var d = new Date();
     var encoder = new mxCodec();
+    //creazione del file xml
     var node = encoder.encode(graph.getModel());
     var blob = new Blob([mxUtils.getPrettyXml(node)], { type: "text/plain;charset=utf-8" });
+    //salvataggio del file xml (filesaver)
     saveAs(blob, d + ".xml");
 }
 
-
+//funzione per aprire il popup per l'export
 function openForm() {
     location.href = "#popupexport";
 }
 
-function getFile(accepted) {
+/*function getFile(accepted) {
     document.getElementById('myFile').accept = accepted;
     document.getElementById('myFile').click();
     var x = document.getElementById("myFile");
@@ -617,21 +631,26 @@ function getFile(accepted) {
     }
     //document.getElementById("demo").innerHTML = txt;
     return txt;
-}
+}*/
 
+//funzione per l'upload e la visualizzazione dell'immagine sul server
 function exportFileImage() {
+    //prendiamo il file
     var file = document.getElementById("fileToUpload").files[0];
     var formData = new FormData();
     formData.append("fileToUpload", file);
     var xhttp = new XMLHttpRequest();
+    //prendiamo l'immagine dal server
     xhttp.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
             var model = graph.getModel();
+            //impostiamo lo stile
             var style = new Array();
             style[mxConstants.STYLE_IMAGE] = this.responseText;
 
             graph.stylesheet.putCellStyle(this.responseText, style);
             model.setStyle(cellImage, this.responseText);
+            //ritorniamo nell'immagine principale
             location.href = "#";
         }
     };
@@ -639,15 +658,18 @@ function exportFileImage() {
     xhttp.send(formData);
 }
 
+//funzione per l'upload e la visualizzione del file xml sul server
 function importXML() {
+    //prendiamo il file
     var file = document.getElementById("fileToUploadXML").files[0];
     var formData = new FormData();
     formData.append("fileToUpload", file);
-
     var xhttp = new XMLHttpRequest();
+    //prendiamo l'immagine dal server
     xhttp.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
             var xml = this.responseText;
+            //importiamo il file xml
             var xmlDocument = mxUtils.parseXml(xml);
             var decoder = new mxCodec(xmlDocument);
             var node = xmlDocument.documentElement;
@@ -656,13 +678,13 @@ function importXML() {
             var d = new Date();
 
             var cnt = 0;
+            //impostiamo gli overlay nei nodi
             graph.traverse(root, true, function (vertex) {
-                console.log("id: " + vertex.getId() + ", value: " + vertex.getValue() + ", todo:" + vertex.todo);
                 if (cnt == 0)
                     addFuntionButton(graph, vertex, false);
                 else
                     addFuntionButton(graph, vertex, true);
-
+                //Aggiungiamo i todo
                 if (vertex.todo == "1") {
                     addTodo(graph, vertex);
                 }
