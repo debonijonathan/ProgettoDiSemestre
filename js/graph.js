@@ -14,6 +14,7 @@ var cellImage;
 var createCell;
 var levelIsSetted = [false, false, false, false];
 var graphOrientation = 0;
+var graphStyle = 0;
 var doc = mxUtils.createXmlDocument();
 
 //funzione per la creazione/manipolazione del grafico 
@@ -41,7 +42,7 @@ function main(container) {
 
         // Impostazione dello stile di default dei nodi
         var style = graph.getStylesheet().getDefaultVertexStyle();
-        setStyle(style);
+        setStyle(style, '#ffd700', '#db1818', '#ffa500');
 
         // Impostazione dello stile di default dei collegamenti ai nodi
         var edgeStyle = graph.getStylesheet().getDefaultEdgeStyle();
@@ -163,15 +164,21 @@ function main(container) {
         };
 
         document.getElementById("defaultStyle").onclick = function () {
-            changeStyle(setStyle(style));
+            graphStyle = 0;
+            changeStyle(setStyle(style, '#ffd700', '#db1818', '#ffa500'));
+            changeBorderStyle('red', '#ffd700');
         }
 
         document.getElementById("style2").onclick = function () {
-            //changeStyle(setStyle2());
+            graphStyle = 1;
+            changeStyle(setStyle(style, '#808080', '#000000', '#808080'));
+            changeBorderStyle('black', '#808080');
         }
 
         document.getElementById("style3").onclick = function () {
-            changeStyle(setStyle3());
+            graphStyle = 2;
+            changeStyle(setStyle(style, '#ffffff', '#000000', '#ffffff'));
+            changeBorderStyle('black', '#ffffff');
         }
     }
 }
@@ -187,18 +194,19 @@ function changeStyle(callback) {
     }
 }
 
-function changeStyle2() {
+//funzione per cambiare il colore del bordo di un singolo nodo
+function changeBorderStyle(value1, value2) {
     graph.getModel().beginUpdate();
     try {
         var children = getAllChildren(graph.getDefaultParent().children[0]);
+        var stylesheet;
         if (children != null) {
             for (var i = 1; i < children.length; i++) {
-                if (children[i].id != 2) {
-                    var style = graph.getModel().getStyle(children[i]);
-                    var newStyle = mxUtils.setStyle('style', mxConstants.STYLE_STROKECOLOR, 'green');
-                    var cs = new Array();
-                    cs[0] = children[i];
-                    graph.setCellStyle(newStyle, cs);
+                stylesheet = children[i].style;
+                if (children[i].myId == 0 || children[i].myId == 1) {
+                    children[i].style = stylesheet + ';strokeColor=' + value1 + ';';
+                } else {
+                    children[i].style = stylesheet + ';strokeColor=' + value2 + ';';
                 }
             }
         }
@@ -206,6 +214,38 @@ function changeStyle2() {
         graph.getModel().endUpdate();
         graph.refresh();
     }
+}
+
+/*function borderColor(value1, value2, value3){
+    if (graphStyle == 0) {
+        cell.style = stylesheet + ';strokeColor=#db1818;';
+    } else if (graphStyle == 1) {
+        cell.style = stylesheet + ';strokeColor=#000000;';
+    } else if (graphStyle == 2) {
+        cell.style = stylesheet + ';strokeColor=#000000;';
+    }
+}**/
+
+function borderColorAddNode(cell) {
+    var stylesheet = cell.style;
+    if (cell.myId == 1) {
+        if (graphStyle == 0) {
+            cell.style = stylesheet + ';strokeColor=#db1818;';
+        } else if (graphStyle == 1) {
+            cell.style = stylesheet + ';strokeColor=#000000;';
+        } else if (graphStyle == 2) {
+            cell.style = stylesheet + ';strokeColor=#000000;';
+        }
+    } else {
+        if (graphStyle == 0) {
+            cell.style = stylesheet + ';strokeColor=#ffd700;';
+        } else if (graphStyle == 1) {
+            cell.style = stylesheet + ';strokeColor=#808080;';
+        } else if (graphStyle == 2) {
+            cell.style = stylesheet + ';strokeColor=#ffffff;';
+        }
+    }
+    return cell;
 }
 
 //funzione per la rimozione delle label nei figli
@@ -375,7 +415,7 @@ function addTodo(graph, cell) {
 }
 
 //funzione per l'aggiunta dello stile di default
-function setStyle(style) {
+function setStyle(style, value1, value2, value3) {
     //Rettangolo per definire un nodo
     style[mxConstants.STYLE_SHAPE] = 'label';
 
@@ -386,9 +426,15 @@ function setStyle(style) {
     //dove inizia l'allineamento a sinitra (tenere in considerazione l'immagine)
     style[mxConstants.STYLE_SPACING_LEFT] = 50;
 
-    style[mxConstants.STYLE_GRADIENTCOLOR] = '#ffd700';
-    style[mxConstants.STYLE_STROKECOLOR] = '#db1818';
-    style[mxConstants.STYLE_FILLCOLOR] = '#ffa500';
+    //style[mxConstants.STYLE_GRADIENTCOLOR] = '#ffd700';
+    //style[mxConstants.STYLE_STROKECOLOR] = '#db1818';
+    //style[mxConstants.STYLE_FILLCOLOR] = '#ffa500';
+
+    style[mxConstants.STYLE_GRADIENTCOLOR] = value1;
+    style[mxConstants.STYLE_STROKECOLOR] = value2;
+    style[mxConstants.STYLE_FILLCOLOR] = value3;
+
+    style[mxConstants.STYLE_STROKEWIDTH] = 3;
 
     //Colore del testo, stile, grandezza e bold
     style[mxConstants.STYLE_FONTCOLOR] = '#10100e';
@@ -420,12 +466,6 @@ function setStyle2(style) {
     style[mxConstants.STYLE_STROKEWIDTH] = 1;
     style[mxConstants.STYLE_PERIMETER] = mxPerimeter.RectanglePerimeter;
 
-}
-
-function setStyle3(style) {
-    // style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_RECTANGLE;
-    // style[mxConstants.STYLE_OPACITY] = 50;
-    // style[mxConstants.STYLE_FONTCOLOR] = '#774400';
 }
 
 function setEdgeStyle(style) {
@@ -462,6 +502,8 @@ function addLabelWithNode(cell, vertex, parent, pos) {
     vertex = graph.insertVertex(parent, null, 'TITLE', 0, 0, 5, 5, 'image=img/cloud.png');
     //assegnamento id
     vertex.myId = cell.myId + 1;
+    //per lo stile del bordo del nodo che devo creare
+    borderColorAddNode(vertex);
     //se il livello in cui devo inserire la label per il livello è disponibile (cioè uguale a false) inserisco e setto a true l'array alla pos corrispndente
     addLabel(vertex, pos);
     //ritorno il vertice che poi andrò ad aggiungere al mio graph
