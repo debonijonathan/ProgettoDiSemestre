@@ -113,7 +113,8 @@ function main(container) {
                         graph.getModel().remove(parent);
                     } else
                         deleteNode(graph, parent);
-                }
+                } else
+                    alert("Non si può eliminare la root!");
             }
         });
 
@@ -216,34 +217,23 @@ function changeBorderStyle(value1, value2) {
     }
 }
 
-/*function borderColor(value1, value2, value3){
+function borderColor(cell, value1, value2, value3) {
+    var stylesheet = cell.style;
     if (graphStyle == 0) {
-        cell.style = stylesheet + ';strokeColor=#db1818;';
+        cell.style = stylesheet + ';strokeColor=' + value1 + ';';
     } else if (graphStyle == 1) {
-        cell.style = stylesheet + ';strokeColor=#000000;';
+        cell.style = stylesheet + ';strokeColor=' + value2 + ';';
     } else if (graphStyle == 2) {
-        cell.style = stylesheet + ';strokeColor=#000000;';
+        cell.style = stylesheet + ';strokeColor=' + value3 + ';';
     }
-}**/
+}
 
 function borderColorAddNode(cell) {
-    var stylesheet = cell.style;
     if (cell.myId == 1) {
-        if (graphStyle == 0) {
-            cell.style = stylesheet + ';strokeColor=#db1818;';
-        } else if (graphStyle == 1) {
-            cell.style = stylesheet + ';strokeColor=#000000;';
-        } else if (graphStyle == 2) {
-            cell.style = stylesheet + ';strokeColor=#000000;';
-        }
+        borderColor(cell, '#db1818', '#000000', '#000000');
     } else {
-        if (graphStyle == 0) {
-            cell.style = stylesheet + ';strokeColor=#ffd700;';
-        } else if (graphStyle == 1) {
-            cell.style = stylesheet + ';strokeColor=#808080;';
-        } else if (graphStyle == 2) {
-            cell.style = stylesheet + ';strokeColor=#ffffff;';
-        }
+        console.log(cell.myId);
+        borderColor(cell, '#ffd700', '#808080', '#ffffff');
     }
     return cell;
 }
@@ -502,8 +492,6 @@ function addLabelWithNode(cell, vertex, parent, pos) {
     vertex = graph.insertVertex(parent, null, 'TITLE', 0, 0, 5, 5, 'image=img/cloud.png');
     //assegnamento id
     vertex.myId = cell.myId + 1;
-    //per lo stile del bordo del nodo che devo creare
-    borderColorAddNode(vertex);
     //se il livello in cui devo inserire la label per il livello è disponibile (cioè uguale a false) inserisco e setto a true l'array alla pos corrispndente
     addLabel(vertex, pos);
     //ritorno il vertice che poi andrò ad aggiungere al mio graph
@@ -531,9 +519,12 @@ function addNode(graph, cell) {
                 break;
             default:
                 vertex = graph.insertVertex(parent, null, 'TITLE', 0, 0, 5, 5, 'image=img/cloud.png');
+                vertex.myId = cell.myId + 1;
         }
         vertex.todo = 0;
         vertex.myparent = cell.getId();
+        //per lo stile del bordo del nodo che devo creare
+        borderColorAddNode(vertex);
         //inseriemento del nodo vertex nel grafico
         graph.updateCellSize(vertex);
         createCell = vertex;
