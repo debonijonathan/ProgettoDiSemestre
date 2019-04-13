@@ -35,6 +35,8 @@ function main(container) {
         graph = new mxGraph(container);
         graph.setConnectable(true);
 
+        new mxRubberband(graph);
+
         //inizio finestrella in alto a sinistar
         var outline = document.getElementById('outlineContainer')
 
@@ -77,7 +79,6 @@ function main(container) {
             // Aggiornamento del modello
             graph.getModel().endUpdate();
         }
-
 
         // Installs a popupmenu handler using local function (see below).
         graph.popupMenuHandler.factoryMethod = function (menu, cell, evt) {
@@ -143,7 +144,6 @@ function main(container) {
         document.getElementById("note").onclick = function () {
             addNode(graph, graph.getDefaultParent());
             createStyleNote(graph, createCell, "note");
-            console.log(createCell.getId());
             graph.removeCellOverlays(createCell);
         }
 
@@ -166,20 +166,26 @@ function main(container) {
 
         document.getElementById("defaultStyle").onclick = function () {
             graphStyle = 0;
+            //imposto il colore per tutti i nodi del grafo
             changeStyle(setStyle(style, '#ffd700', '#db1818', '#ffa500'));
-            changeBorderStyle('red', '#ffd700');
+            //colo il bordo dei nodi del livello 1 e livello 2
+            changeNodeStyle('red', '#ffd700', '#ffa500');
         }
 
         document.getElementById("style2").onclick = function () {
             graphStyle = 1;
+            //imposto il colore per tutti i nodi del grafo
             changeStyle(setStyle(style, '#808080', '#000000', '#808080'));
-            changeBorderStyle('black', '#808080');
+            //colo il bordo dei nodi del livello 1 e livello 2
+            changeNodeStyle('black', '#808080', '#808080');
         }
 
         document.getElementById("style3").onclick = function () {
             graphStyle = 2;
+            //imposto il colore per tutti i nodi del grafo
             changeStyle(setStyle(style, '#ffffff', '#000000', '#ffffff'));
-            changeBorderStyle('black', '#ffffff');
+            //colo il bordo dei nodi del livello 1 e livello 2
+            changeNodeStyle('black', '#ffffff', '#ffffff');
         }
     }
 }
@@ -196,18 +202,18 @@ function changeStyle(callback) {
 }
 
 //funzione per cambiare il colore del bordo di un singolo nodo
-function changeBorderStyle(value1, value2) {
+function changeNodeStyle(value1, value2, value3) {
     graph.getModel().beginUpdate();
     try {
         var children = getAllChildren(graph.getDefaultParent().children[0]);
         var stylesheet;
         if (children != null) {
-            for (var i = 1; i < children.length; i++) {
-                stylesheet = children[i].style;
+            for (var i = 0; i < children.length; i++) {
+                stylesheet = children[i].style + ';' + ';gradientColor=' + value2 + ';' + ';fillColor=' + value3 + ';';
                 if (children[i].myId == 0 || children[i].myId == 1) {
-                    children[i].style = stylesheet + ';strokeColor=' + value1 + ';';
+                    children[i].style = stylesheet + ';strokeColor=' + value1;
                 } else {
-                    children[i].style = stylesheet + ';strokeColor=' + value2 + ';';
+                    children[i].style = stylesheet + ';strokeColor=' + value2;
                 }
             }
         }
@@ -217,7 +223,7 @@ function changeBorderStyle(value1, value2) {
     }
 }
 
-function borderColor(cell, value1, value2, value3) {
+function changeBorderColor(cell, value1, value2, value3) {
     var stylesheet = cell.style;
     if (graphStyle == 0) {
         cell.style = stylesheet + ';strokeColor=' + value1 + ';';
@@ -230,10 +236,9 @@ function borderColor(cell, value1, value2, value3) {
 
 function borderColorAddNode(cell) {
     if (cell.myId == 1) {
-        borderColor(cell, '#db1818', '#000000', '#000000');
+        changeBorderColor(cell, '#db1818', '#000000', '#000000');
     } else {
-        console.log(cell.myId);
-        borderColor(cell, '#ffd700', '#808080', '#ffffff');
+        changeBorderColor(cell, '#ffd700', '#808080', '#ffffff');
     }
     return cell;
 }
@@ -366,6 +371,51 @@ function createPopupMenu(graph, menu, cell, evt) {
 
             menu.addSeparator();
 
+            menu.addItem('Add Node', null, function () {
+                var cell = graph.getSelectionCell();
+                addNode(graph, cell);
+            });
+
+            menu.addItem('Delete Node', null, function () {
+                var cell = graph.getSelectionCell();
+                if (cell.id != 2)
+                    deleteNode(graph, cell);
+                else
+                    alert('Il nodo principale non può essere eliminata!');
+            });
+
+            menu.addSeparator();
+
+            menu.addItem('Change border color', null, function () {
+                var cell = graph.getSelectionCell();
+                if (cell != null) {
+                    var stylesheet = cell.style;
+                    var newStyle = mxUtils.prompt('Choose new border color:', null);
+                    if (controllInput(newStyle)) {
+                        alert('Sono permesse solo lettere!');
+                    } else {
+                        cell.style = stylesheet + ';strokeColor=' + newStyle + ';';
+                        graph.refresh();
+                    }
+                }
+            });
+
+            menu.addItem('Change node color', null, function () {
+                var cell = graph.getSelectionCell();
+                if (cell != null) {
+                    var stylesheet = cell.style;
+                    var newStyle = mxUtils.prompt('Choose new node color:', null);
+                    if (controllInput(newStyle)) {
+                        alert('Sono permesse solo lettere!');
+                    } else {
+                        cell.style = stylesheet + ';gradientColor=' + newStyle + ';' + ';fillColor=' + newStyle + ';';
+                        graph.refresh();
+                    }
+                }
+            });
+
+            menu.addSeparator();
+
             menu.addItem('Edit label', 'img/pencil.png', function () {
                 //Setto la label in modo da editarlo
                 graph.startEditingAtCell(cell);
@@ -391,6 +441,12 @@ function createPopupMenu(graph, menu, cell, evt) {
         });
     }
 };
+
+function controllInput(input) {
+    if (!/^[a-zA-Z]*$/g.test(input))
+        return true;
+    return false;
+}
 
 //funzione per l'aggiunta/gestione del todo
 function addTodo(graph, cell) {
@@ -424,7 +480,7 @@ function setStyle(style, value1, value2, value3) {
     style[mxConstants.STYLE_STROKECOLOR] = value2;
     style[mxConstants.STYLE_FILLCOLOR] = value3;
 
-    style[mxConstants.STYLE_STROKEWIDTH] = 3;
+    style[mxConstants.STYLE_STROKEWIDTH] = 4;
 
     //Colore del testo, stile, grandezza e bold
     style[mxConstants.STYLE_FONTCOLOR] = '#10100e';
@@ -444,18 +500,6 @@ function setStyle(style, value1, value2, value3) {
     //Grandezza dell'immagine
     style[mxConstants.STYLE_IMAGE_WIDTH] = '30';
     style[mxConstants.STYLE_IMAGE_HEIGHT] = '30';
-}
-
-function setStyle2(style) {
-    style[mxConstants.STYLE_FONTFAMILY] = "Salesforce Sans";
-    style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_CLOUD;
-    style[mxConstants.STYLE_FOLDABLE] = 0;
-    style[mxConstants.STYLE_ARCSIZE] = 9;
-    style[mxConstants.STYLE_FILLCOLOR] = "#A6B8CE";
-    style[mxConstants.STYLE_STROKECOLOR] = "#7591b3";//original
-    style[mxConstants.STYLE_STROKEWIDTH] = 1;
-    style[mxConstants.STYLE_PERIMETER] = mxPerimeter.RectanglePerimeter;
-
 }
 
 function setEdgeStyle(style) {
