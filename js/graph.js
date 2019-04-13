@@ -316,6 +316,7 @@ function verticalOrganization() {
     addLabels(pos);
     var layout = new mxCompactTreeLayout(graph);
     layout.horizontal = false;
+    layout.nodeDistance = 50;
     layout.execute(graph.getDefaultParent());
 }
 
@@ -328,6 +329,7 @@ function orizzontalOrganization() {
     addLabels(pos);
     var layout = new mxCompactTreeLayout(graph);
     layout.horizontal = true;
+    layout.nodeDistance = 50;
     layout.execute(graph.getDefaultParent())
 }
 
@@ -390,13 +392,15 @@ function createPopupMenu(graph, menu, cell, evt) {
                 var cell = graph.getSelectionCell();
                 if (cell != null) {
                     var stylesheet = cell.style;
-                    var newStyle = mxUtils.prompt('Choose new border color:', null);
-                    if (controllInput(newStyle)) {
-                        alert('Sono permesse solo lettere!');
-                    } else {
-                        cell.style = stylesheet + ';strokeColor=' + newStyle + ';';
-                        graph.refresh();
-                    }
+                    var newStyle = mxUtils.prompt('Choose new border color(English name):', null);
+                    console.log(newStyle);
+                    if (newStyle != null)
+                        if (controllInput(newStyle)) {
+                            alert('Sono permesse solo lettere!');
+                        } else {
+                            cell.style = stylesheet + ';strokeColor=' + newStyle + ';';
+                            graph.refresh();
+                        }
                 }
             });
 
@@ -404,13 +408,14 @@ function createPopupMenu(graph, menu, cell, evt) {
                 var cell = graph.getSelectionCell();
                 if (cell != null) {
                     var stylesheet = cell.style;
-                    var newStyle = mxUtils.prompt('Choose new node color:', null);
-                    if (controllInput(newStyle)) {
-                        alert('Sono permesse solo lettere!');
-                    } else {
-                        cell.style = stylesheet + ';gradientColor=' + newStyle + ';' + ';fillColor=' + newStyle + ';';
-                        graph.refresh();
-                    }
+                    var newStyle = mxUtils.prompt('Choose new node color(English name):', null);
+                    if (newStyle != null)
+                        if (controllInput(newStyle)) {
+                            alert('Sono permesse solo lettere!');
+                        } else {
+                            cell.style = stylesheet + ';gradientColor=' + newStyle + ';' + ';fillColor=' + newStyle + ';';
+                            graph.refresh();
+                        }
                 }
             });
 
@@ -472,14 +477,14 @@ function setStyle(style, value1, value2, value3) {
     //dove inizia l'allineamento a sinitra (tenere in considerazione l'immagine)
     style[mxConstants.STYLE_SPACING_LEFT] = 50;
 
-    //style[mxConstants.STYLE_GRADIENTCOLOR] = '#ffd700';
-    //style[mxConstants.STYLE_STROKECOLOR] = '#db1818';
-    //style[mxConstants.STYLE_FILLCOLOR] = '#ffa500';
-
+    //colore dello sfondo del nodo
     style[mxConstants.STYLE_GRADIENTCOLOR] = value1;
+    //colore del bordo del nodo
     style[mxConstants.STYLE_STROKECOLOR] = value2;
+    //colore main parte del nodo
     style[mxConstants.STYLE_FILLCOLOR] = value3;
 
+    //dimensione del bordo del nodo
     style[mxConstants.STYLE_STROKEWIDTH] = 4;
 
     //Colore del testo, stile, grandezza e bold
