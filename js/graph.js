@@ -170,6 +170,7 @@ function main(container) {
             changeStyle(setStyle(style, '#ffd700', '#db1818', '#ffa500'));
             //colo il bordo dei nodi del livello 1 e livello 2
             changeNodeStyle('red', '#ffd700', '#ffa500');
+            defaultEdgeStyle('#000000');
         }
 
         document.getElementById("style2").onclick = function () {
@@ -178,6 +179,7 @@ function main(container) {
             changeStyle(setStyle(style, '#808080', '#000000', '#808080'));
             //colo il bordo dei nodi del livello 1 e livello 2
             changeNodeStyle('black', '#808080', '#808080');
+            defaultEdgeStyle('#000000');
         }
 
         document.getElementById("style3").onclick = function () {
@@ -186,9 +188,25 @@ function main(container) {
             changeStyle(setStyle(style, '#ffffff', '#000000', '#ffffff'));
             //colo il bordo dei nodi del livello 1 e livello 2
             changeNodeStyle('black', '#ffffff', '#ffffff');
+            defaultEdgeStyle('#000000');
         }
     }
 }
+
+function defaultEdgeStyle(newStyle) {
+    var children = getAllChildren(graph.getDefaultParent().children[0]);
+    for (var i = 0; i < children.length; i++) {
+        if (children[i].edges != 0) {
+            var edges = children[i].edges;
+            for (var i = 0; i < edges.length; i++) {
+                edges[i].style = 'strokeColor=' + newStyle + ';';
+            }
+            graph.refresh();
+        }
+    }
+}
+
+
 //funzione per il cambiamento dello stile 
 function changeStyle(callback) {
     graph.getModel().beginUpdate();
@@ -373,12 +391,12 @@ function createPopupMenu(graph, menu, cell, evt) {
 
             menu.addSeparator();
 
-            menu.addItem('Add Node', null, function () {
+            menu.addItem('Add Node', 'images/plus.png', function () {
                 var cell = graph.getSelectionCell();
                 addNode(graph, cell);
             });
 
-            menu.addItem('Delete Node', null, function () {
+            menu.addItem('Delete Node', 'images/error.gif', function () {
                 var cell = graph.getSelectionCell();
                 if (cell.id != 2)
                     deleteNode(graph, cell);
@@ -387,22 +405,6 @@ function createPopupMenu(graph, menu, cell, evt) {
             });
 
             menu.addSeparator();
-
-            menu.addItem('Change border color', null, function () {
-                var cell = graph.getSelectionCell();
-                if (cell != null) {
-                    var stylesheet = cell.style;
-                    var newStyle = mxUtils.prompt('Choose new border color(English name):', null);
-                    console.log(newStyle);
-                    if (newStyle != null)
-                        if (controllInput(newStyle)) {
-                            alert('Sono permesse solo lettere!');
-                        } else {
-                            cell.style = stylesheet + ';strokeColor=' + newStyle + ';';
-                            graph.refresh();
-                        }
-                }
-            });
 
             menu.addItem('Change node color', null, function () {
                 var cell = graph.getSelectionCell();
@@ -417,6 +419,40 @@ function createPopupMenu(graph, menu, cell, evt) {
                             graph.refresh();
                         }
                 }
+            });
+
+            menu.addItem('Change border color', null, function () {
+                var cell = graph.getSelectionCell();
+                if (cell != null) {
+                    var stylesheet = cell.style;
+                    var newStyle = mxUtils.prompt('Choose new border color(English name):', null);
+                    if (newStyle != null)
+                        if (controllInput(newStyle)) {
+                            alert('Sono permesse solo lettere!');
+                        } else {
+                            cell.style = stylesheet + ';strokeColor=' + newStyle + ';';
+                            graph.refresh();
+                        }
+                }
+            });
+
+            menu.addItem('Change edges color', null, function () {
+                var edges = graph.getSelectionCell().edges;
+                var newStyle = mxUtils.prompt('Choose new edges color(English name):', null);
+                if (newStyle != null)
+                    if (controllInput(newStyle)) {
+                        alert('Sono permesse solo lettere!');
+                    } else {
+                        for (var i = 0; i < edges.length; i++) {
+                            edges[i].style = 'strokeColor=' + newStyle + ';';
+                        }
+                        graph.refresh();
+                    }
+            });
+
+            menu.addItem('Properties', 'images/properties.gif', function () {
+                var cell = graph.getSelectionCell();
+                //showProperties(graph, cell); 
             });
 
             menu.addSeparator();
@@ -445,6 +481,74 @@ function createPopupMenu(graph, menu, cell, evt) {
             location.href = "#popup3";
         });
     }
+};
+
+function showProperties(graph, cell) {
+    // Creates a form for the user object inside
+    // the cell
+    var form = new mxForm('properties');
+
+    // Adds a field for the columnname
+    var idField = form.addText('Id', cell.id);
+
+    var xField = form.addText('X', cell.geometry.x);
+    var yField = form.addText('Y', cell.geometry.y);
+
+    var wnd = null;
+
+    // Defines the function to be executed when the
+    // OK button is pressed in the dialog
+    var okFunction = function () {
+        cell.geometry.x = xField.value;
+        cell.geometry.y = yField.value;
+        wnd.destroy();
+    }
+
+    // Defines the function to be executed when the
+    // Cancel button is pressed in the dialog
+    var cancelFunction = function () {
+        wnd.destroy();
+    }
+    form.addButtons(okFunction, cancelFunction);
+
+    var parent = graph.model.getParent(cell);
+    wnd = showModalWindow('Properties', form.table, 10, 10);
+};
+
+function showModalWindow(title, content, width, height) {
+
+    var background = document.createElement('div');
+    background.style.position = 'absolute';
+    background.style.left = '0px';
+    background.style.top = '0px';
+    background.style.right = '0px';
+    background.style.bottom = '0px';
+    background.style.background = 'black';
+    mxUtils.setOpacity(background, 0);
+
+    //document.getElementById('properties').append(background);
+
+    if (mxClient.IS_QUIRKS) {
+        new mxDivResizer(background);
+    }
+
+    var x = Math.max(0, document.body.scrollWidth / 2 - width / 2);
+    var y = Math.max(10, (document.body.scrollHeight ||
+        document.documentElement.scrollHeight) / 2 - height * 2 / 3);
+    var wnd = new mxWindow(title, content, 100, 100, width, height, false, true);
+    wnd.setClosable(true);
+
+    // Fades the background out after after the window has been closed
+    wnd.addListener(mxEvent.DESTROY, function (evt) {
+        mxEffects.fadeOut(background, 50, true,
+            10, 30, true);
+    });
+
+    wnd.setVisible(true);
+
+    console.log(wnd);
+
+    return wnd;
 };
 
 function controllInput(input) {
