@@ -10,6 +10,8 @@
  ******************************************************/
 
 var graph;
+var editor;
+var style;
 var cellImage;
 var createCell;
 var levelIsSetted = [false, false, false, false];
@@ -34,8 +36,12 @@ function main(container) {
         // Creazione del grafo all'interno del contenitore
         graph = new mxGraph(container);
         graph.setConnectable(true);
+        graph.setTooltips(true);
 
-        new mxRubberband(graph);
+        editor = new mxEditor(graph);
+        editor.setGraphContainer(container);
+
+        new mxCellTracker(graph, '#000000');
 
         //inizio finestrella in alto a sinistar
         var outline = document.getElementById('outlineContainer')
@@ -43,7 +49,7 @@ function main(container) {
         var outln = new mxOutline(graph, outline);
 
         // Impostazione dello stile di default dei nodi
-        var style = graph.getStylesheet().getDefaultVertexStyle();
+        style = graph.getStylesheet().getDefaultVertexStyle();
         setStyle(style, '#ffd700', '#db1818', '#ffa500');
 
         // Impostazione dello stile di default dei collegamenti ai nodi
@@ -82,30 +88,30 @@ function main(container) {
 
         // Installs a popupmenu handler using local function (see below).
         graph.popupMenuHandler.factoryMethod = function (menu, cell, evt) {
-            return createPopupMenu(graph, menu, cell, evt);
+            return createPopupMenu(editor, graph, menu, cell, evt);
         };
         // Aggiunta del handler per la tastiera
         var keyHandler = new mxKeyHandler(graph);
 
         //Aggiunta del nodo tramite tasto tab
-        keyHandler.bindKey(9, function (evt) {
+        keyHandler.bindKey(9, function (_evt) {
             if (graph.isEnabled()) {
                 addNode(graph, graph.getModel().getCell(graph.getSelectionCell().getId()));
             }
         });
 
         //Aggiunta del nodo tramite tasto enter
-        keyHandler.bindKey(13, function (evt) {
+        keyHandler.bindKey(13, function (_evt) {
             if (graph.isEnabled()) {
-                var parent = graph.getModel().getCell(graph.getSelectionCell().myparent);
-                if (parent.getId() != 1) {
+                var parent = graph.getDefaultParent().children[0];
+                if (parent.getId() != 1 && parent != null) {
                     addNode(graph, parent);
                 }
             }
         });
 
         //Aggiunta del nodo allo stesso livello di quello selezionato
-        keyHandler.bindKey(46, function (evt) {
+        keyHandler.bindKey(46, function (_evt) {
             var parent = graph.getModel().getCell(graph.getSelectionCell().getId());
             console.log(parent.style);
             if (graph.isEnabled()) {
@@ -149,7 +155,7 @@ function main(container) {
 
         //edit manager
         var undoManager = new mxUndoManager();
-        var listener = function (sender, evt) {
+        var listener = function (_sender, evt) {
             undoManager.undoableEditHappened(evt.getProperty('edit'));
         };
 
@@ -164,46 +170,54 @@ function main(container) {
             undoManager.redo();
         };
 
-        document.getElementById("defaultStyle").onclick = function () {
-            graphStyle = 0;
-            //imposto il colore per tutti i nodi del grafo
-            changeStyle(setStyle(style, '#ffd700', '#db1818', '#ffa500'));
-            //colo il bordo dei nodi del livello 1 e livello 2
-            changeNodeStyle('red', '#ffd700', '#ffa500');
-            defaultEdgeStyle('#000000');
-        }
 
-        document.getElementById("style2").onclick = function () {
-            graphStyle = 1;
-            //imposto il colore per tutti i nodi del grafo
-            changeStyle(setStyle(style, '#808080', '#000000', '#808080'));
-            //colo il bordo dei nodi del livello 1 e livello 2
-            changeNodeStyle('black', '#808080', '#808080');
-            defaultEdgeStyle('#000000');
-        }
+        editor.addAction('properties', function (editor, cell) {
+            showProperties(graph, cell);
+        });
 
-        document.getElementById("style3").onclick = function () {
-            graphStyle = 2;
-            //imposto il colore per tutti i nodi del grafo
-            changeStyle(setStyle(style, '#ffffff', '#000000', '#ffffff'));
-            //colo il bordo dei nodi del livello 1 e livello 2
-            changeNodeStyle('black', '#ffffff', '#ffffff');
-            defaultEdgeStyle('#000000');
-        }
     }
+}
+
+function defaultStyleGraph() {
+    graphStyle = 0;
+    //imposto il colore per tutti i nodi del grafo
+    changeStyle(setStyle(style, '#ffd700', '#db1818', '#ffa500'));
+    //colo il bordo dei nodi del livello 1 e livello 2
+    changeNodeStyle('red', '#ffd700', '#ffa500');
+    defaultEdgeStyle('#000000');
+}
+
+function secondStyleGraph() {
+    graphStyle = 1;
+    //imposto il colore per tutti i nodi del grafo
+    changeStyle(setStyle(style, '#808080', '#000000', '#808080'));
+    //colo il bordo dei nodi del livello 1 e livello 2
+    changeNodeStyle('black', '#808080', '#808080');
+    defaultEdgeStyle('#000000');
+}
+
+function thirdStyleFunction() {
+    graphStyle = 2;
+    //imposto il colore per tutti i nodi del grafo
+    changeStyle(setStyle(style, '#ffffff', '#000000', '#ffffff'));
+    //colo il bordo dei nodi del livello 1 e livello 2
+    changeNodeStyle('black', '#ffffff', '#ffffff');
+    defaultEdgeStyle('#000000');
 }
 
 function defaultEdgeStyle(newStyle) {
     var children = getAllChildren(graph.getDefaultParent().children[0]);
-    for (var i = 0; i < children.length; i++) {
-        if (children[i].edges != 0) {
-            var edges = children[i].edges;
-            for (var i = 0; i < edges.length; i++) {
-                edges[i].style = 'strokeColor=' + newStyle + ';';
+    if (children.length > 1) {
+        for (var i = 0; i < children.length; i++) {
+            if (children[i].edges != 0) {
+                var edges = children[i].edges;
+                for (var j = 0; j < edges.length; j++) {
+                    edges[j].style = 'strokeColor=' + newStyle + ';';
+                }
             }
-            graph.refresh();
         }
     }
+    graph.refresh();
 }
 
 
@@ -361,7 +375,7 @@ function mindmapOrganization() {
 }
 
 // funzione per la creazione del popupmenu alla pressione del tasto destro
-function createPopupMenu(graph, menu, cell, evt) {
+function createPopupMenu(editor, graph, menu, cell, _evt) {
     if (cell != null) {
         var bool = false;
         try {
@@ -438,21 +452,23 @@ function createPopupMenu(graph, menu, cell, evt) {
 
             menu.addItem('Change edges color', null, function () {
                 var edges = graph.getSelectionCell().edges;
-                var newStyle = mxUtils.prompt('Choose new edges color(English name):', null);
-                if (newStyle != null)
-                    if (controllInput(newStyle)) {
-                        alert('Sono permesse solo lettere!');
-                    } else {
-                        for (var i = 0; i < edges.length; i++) {
-                            edges[i].style = 'strokeColor=' + newStyle + ';';
+                if (edges != null) {
+                    var newStyle = mxUtils.prompt('Choose new edges color(English name):', null);
+                    if (newStyle != null)
+                        if (controllInput(newStyle)) {
+                            alert('Sono permesse solo lettere!');
+                        } else {
+                            for (var i = 0; i < edges.length; i++) {
+                                edges[i].style = 'strokeColor=' + newStyle + ';';
+                            }
+                            graph.refresh();
                         }
-                        graph.refresh();
-                    }
+                }
             });
 
             menu.addItem('Properties', 'images/properties.gif', function () {
                 var cell = graph.getSelectionCell();
-                //showProperties(graph, cell); 
+                //editor.execute('properties', cell);
             });
 
             menu.addSeparator();
@@ -482,6 +498,13 @@ function createPopupMenu(graph, menu, cell, evt) {
         });
     }
 };
+
+function createPopupMenu2(graph, menu, cell, _evt) {
+    menu.addItem('Edit label', 'img/pencil.png', function () {
+        //Setto la label in modo da editarlo
+        graph.startEditingAtCell(cell);
+    });
+}
 
 function showProperties(graph, cell) {
     // Creates a form for the user object inside
@@ -524,9 +547,8 @@ function showModalWindow(title, content, width, height) {
     background.style.right = '0px';
     background.style.bottom = '0px';
     background.style.background = 'black';
-    mxUtils.setOpacity(background, 0);
-
-    //document.getElementById('properties').append(background);
+    mxUtils.setOpacity(background, 50);
+    document.activeElement.appendChild(background);
 
     if (mxClient.IS_QUIRKS) {
         new mxDivResizer(background);
@@ -539,7 +561,7 @@ function showModalWindow(title, content, width, height) {
     wnd.setClosable(true);
 
     // Fades the background out after after the window has been closed
-    wnd.addListener(mxEvent.DESTROY, function (evt) {
+    wnd.addListener(mxEvent.DESTROY, function (_evt) {
         mxEffects.fadeOut(background, 50, true,
             10, 30, true);
     });
@@ -623,7 +645,7 @@ function addFuntionButton(graph, cell, flagDelete) {
     addOverlay.align = mxConstants.ALIGN_CENTER;
     addOverlay.verticalAlign = mxConstants.ALIGN_BOTTOM;
     graph.addCellOverlay(cell, addOverlay);
-    addOverlay.addListener(mxEvent.CLICK, mxUtils.bind(this, function (sender, evt) {
+    addOverlay.addListener(mxEvent.CLICK, mxUtils.bind(this, function (_sender, _evt) {
         addNode(graph, cell);
     }));
     //se non è il primo allora metti il flag per poterlo cancellare
@@ -633,7 +655,7 @@ function addFuntionButton(graph, cell, flagDelete) {
         deleteOverlay.align = mxConstants.ALIGN_RIGHT;
         deleteOverlay.verticalAlign = mxConstants.ALIGN_TOP;
         graph.addCellOverlay(cell, deleteOverlay);
-        deleteOverlay.addListener(mxEvent.CLICK, mxUtils.bind(this, function (sender, evt) {
+        deleteOverlay.addListener(mxEvent.CLICK, mxUtils.bind(this, function (_sender, _evt) {
             deleteNode(graph, cell);
         }));
     }
@@ -712,7 +734,7 @@ function organizzationMethod(value) {
 
 //funzione per eliminare le lable da un nodo scorrendo i figli, una volta eliminate rimetto 
 //la posizione coretta dell'array booleano a false
-function deleteChildrenHaveLabel(children, graph) {
+function deleteChildrenHaveLabel(children, _graph) {
     for (var i = 0; i < children.length; i++) {
         if (children[i].children != null) {
             var valueCell = children[i].children[0].value;
