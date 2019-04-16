@@ -10,6 +10,7 @@
  ******************************************************/
 
 var graph;
+var style;
 var cellImage;
 var createCell;
 var levelIsSetted = [false, false, false, false];
@@ -43,7 +44,7 @@ function main(container) {
         var outln = new mxOutline(graph, outline);
 
         // Impostazione dello stile di default dei nodi
-        var style = graph.getStylesheet().getDefaultVertexStyle();
+        style = graph.getStylesheet().getDefaultVertexStyle();
         setStyle(style, '#ffd700', '#db1818', '#ffa500');
 
         // Impostazione dello stile di default dei collegamenti ai nodi
@@ -163,47 +164,49 @@ function main(container) {
         document.getElementById("redo").onclick = function () {
             undoManager.redo();
         };
-
-        document.getElementById("defaultStyle").onclick = function () {
-            graphStyle = 0;
-            //imposto il colore per tutti i nodi del grafo
-            changeStyle(setStyle(style, '#ffd700', '#db1818', '#ffa500'));
-            //colo il bordo dei nodi del livello 1 e livello 2
-            changeNodeStyle('red', '#ffd700', '#ffa500');
-            defaultEdgeStyle('#000000');
-        }
-
-        document.getElementById("style2").onclick = function () {
-            graphStyle = 1;
-            //imposto il colore per tutti i nodi del grafo
-            changeStyle(setStyle(style, '#808080', '#000000', '#808080'));
-            //colo il bordo dei nodi del livello 1 e livello 2
-            changeNodeStyle('black', '#808080', '#808080');
-            defaultEdgeStyle('#000000');
-        }
-
-        document.getElementById("style3").onclick = function () {
-            graphStyle = 2;
-            //imposto il colore per tutti i nodi del grafo
-            changeStyle(setStyle(style, '#ffffff', '#000000', '#ffffff'));
-            //colo il bordo dei nodi del livello 1 e livello 2
-            changeNodeStyle('black', '#ffffff', '#ffffff');
-            defaultEdgeStyle('#000000');
-        }
     }
+}
+
+function defaultStyleGraph() {
+    graphStyle = 0;
+    //imposto il colore per tutti i nodi del grafo
+    changeStyle(setStyle(style, '#ffd700', '#db1818', '#ffa500'));
+    //colo il bordo dei nodi del livello 1 e livello 2
+    changeNodeStyle('red', '#ffd700', '#ffa500');
+    defaultEdgeStyle('#000000');
+}
+
+function secondStyleGraph() {
+    graphStyle = 1;
+    //imposto il colore per tutti i nodi del grafo
+    changeStyle(setStyle(style, '#808080', '#000000', '#808080'));
+    //colo il bordo dei nodi del livello 1 e livello 2
+    changeNodeStyle('black', '#808080', '#808080');
+    defaultEdgeStyle('#000000');
+}
+
+function thirdStyleFunction() {
+    graphStyle = 2;
+    //imposto il colore per tutti i nodi del grafo
+    changeStyle(setStyle(style, '#ffffff', '#000000', '#ffffff'));
+    //colo il bordo dei nodi del livello 1 e livello 2
+    changeNodeStyle('black', '#ffffff', '#ffffff');
+    defaultEdgeStyle('#000000');
 }
 
 function defaultEdgeStyle(newStyle) {
     var children = getAllChildren(graph.getDefaultParent().children[0]);
-    for (var i = 0; i < children.length; i++) {
-        if (children[i].edges != 0) {
-            var edges = children[i].edges;
-            for (var i = 0; i < edges.length; i++) {
-                edges[i].style = 'strokeColor=' + newStyle + ';';
+    if (children.length > 1) {
+        for (var i = 0; i < children.length; i++) {
+            if (children[i].edges != 0) {
+                var edges = children[i].edges;
+                for (var j = 0; j < edges.length; j++) {
+                    edges[j].style = 'strokeColor=' + newStyle + ';';
+                }
             }
-            graph.refresh();
         }
     }
+    graph.refresh();
 }
 
 
@@ -438,21 +441,23 @@ function createPopupMenu(graph, menu, cell, evt) {
 
             menu.addItem('Change edges color', null, function () {
                 var edges = graph.getSelectionCell().edges;
-                var newStyle = mxUtils.prompt('Choose new edges color(English name):', null);
-                if (newStyle != null)
-                    if (controllInput(newStyle)) {
-                        alert('Sono permesse solo lettere!');
-                    } else {
-                        for (var i = 0; i < edges.length; i++) {
-                            edges[i].style = 'strokeColor=' + newStyle + ';';
+                if (edges != null) {
+                    var newStyle = mxUtils.prompt('Choose new edges color(English name):', null);
+                    if (newStyle != null)
+                        if (controllInput(newStyle)) {
+                            alert('Sono permesse solo lettere!');
+                        } else {
+                            for (var i = 0; i < edges.length; i++) {
+                                edges[i].style = 'strokeColor=' + newStyle + ';';
+                            }
+                            graph.refresh();
                         }
-                        graph.refresh();
-                    }
+                }
             });
 
             menu.addItem('Properties', 'images/properties.gif', function () {
                 var cell = graph.getSelectionCell();
-                //showProperties(graph, cell); 
+                showProperties(graph, cell);
             });
 
             menu.addSeparator();
@@ -526,7 +531,7 @@ function showModalWindow(title, content, width, height) {
     background.style.background = 'black';
     mxUtils.setOpacity(background, 0);
 
-    //document.getElementById('properties').append(background);
+    document.body.appendChild(background);
 
     if (mxClient.IS_QUIRKS) {
         new mxDivResizer(background);
