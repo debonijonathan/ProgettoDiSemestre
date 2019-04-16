@@ -35,8 +35,9 @@ function main(container) {
         // Creazione del grafo all'interno del contenitore
         graph = new mxGraph(container);
         graph.setConnectable(true);
+        graph.setTooltips(true);
 
-        new mxRubberband(graph);
+        new mxCellTracker(graph, '#000000');
 
         //inizio finestrella in alto a sinistar
         var outline = document.getElementById('outlineContainer')
@@ -455,6 +456,9 @@ function createPopupMenu(graph, menu, cell, evt) {
                 }
             });
 
+            menu.createSubmenu(menu.addItem());
+
+
             menu.addItem('Properties', 'images/properties.gif', function () {
                 var cell = graph.getSelectionCell();
                 showProperties(graph, cell);
@@ -487,6 +491,13 @@ function createPopupMenu(graph, menu, cell, evt) {
         });
     }
 };
+
+function createPopupMenu2(graph, menu, cell, evt) {
+    menu.addItem('Edit label', 'img/pencil.png', function () {
+        //Setto la label in modo da editarlo
+        graph.startEditingAtCell(cell);
+    });
+}
 
 function showProperties(graph, cell) {
     // Creates a form for the user object inside
