@@ -18,6 +18,7 @@ var levelIsSetted = [false, false, false, false];
 var graphOrientation = 0;
 var graphStyle = 0;
 var doc = mxUtils.createXmlDocument();
+var fitIsActive;
 
 //funzione per la creazione/manipolazione del grafico 
 function main(container) {
@@ -387,7 +388,10 @@ function verticalOrganization() {
     layout.horizontal = false;
     layout.nodeDistance = 50;
     layout.execute(graph.getDefaultParent());
-    fit();
+    fitIsActive = document.getElementById('checkBox').checked;
+    if (fitIsActive)
+        fit();
+
 }
 
 //funzione per l'ordinamento delle grafico in modo orizzontale
@@ -401,7 +405,10 @@ function orizzontalOrganization() {
     layout.horizontal = true;
     layout.nodeDistance = 50;
     layout.execute(graph.getDefaultParent())
-    fit();
+    fitIsActive = document.getElementById('checkBox').checked;
+    if (fitIsActive)
+        fit();
+
 }
 
 //funzione per l'ordinamento delle grafico in modo mindmap
@@ -411,7 +418,9 @@ function mindmapOrganization() {
     var organic = new mxFastOrganicLayout(graph);
     organic.forceConstant = 120;
     organic.execute(graph.getDefaultParent());
-    fit();
+    fitIsActive = document.getElementById('checkBox').checked;
+    if (fitIsActive)
+        fit();
 }
 
 // funzione per la creazione del popupmenu alla pressione del tasto destro
