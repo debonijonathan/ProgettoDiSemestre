@@ -27,6 +27,10 @@ if ($_FILES["fileToUpload"]["size"] > 500000) {
     echo "Sorry, your file is too large.";
     $uploadOk = 0;
 }
+if($imageFileType != "xml") {
+    echo "Sorry, only XML files are allowed.";
+    $uploadOk = 0;
+}
 
 // controllo se $uploadOk è impostato su 0 quindi produce un errore
 if ($uploadOk == 0) {
