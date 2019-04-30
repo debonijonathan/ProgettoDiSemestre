@@ -142,9 +142,11 @@ function main(container) {
             //Scala per una pagina
             var scale = mxUtils.getScaleForPageCount(1, graph);
             //print su una pagina 
-            var preview = new mxPrintPreview(graph, scale);
+            var preview = new mxPrintPreview(graph, scale, null, null, 0, 50, '#0000ff', 'MindMap Graph');
+            //
+            preview.insertBackgroundImage();
             //preview
-            preview.open();
+            preview.print();
         }
 
         document.getElementById("note").onclick = function () {
@@ -170,12 +172,47 @@ function main(container) {
             undoManager.redo();
         };
 
+        document.getElementById("show").onclick = function () {
+            mxUtils.show(graph, null, 100, 100);
+        };
 
         editor.addAction('properties', function (editor, cell) {
             showProperties(graph, cell);
         });
 
+        graph.dblClick = function (evt, cell) {
+            var mxe = new mxEventObject(mxEvent.DOUBLE_CLICK, 'event', evt, 'cell', cell);
+            this.fireEvent(mxe);
+
+            if (this.isEnabled() && !mxEvent.isConsumed(evt) && !mxe.isConsumed()) {
+                mxUtils.alert('Hello, World!');
+                mxe.consume();
+            }
+        }
+
     }
+}
+
+function fit() {
+    var children = getAllChildren(graph.getDefaultParent().children[0]);
+    if (children.length >= 7) {
+        graph.fit();
+        graph.view.rendering = true;
+        graph.refresh();
+    }
+}
+
+function allElementSelect() {
+    graph.selectAll();
+}
+
+function allNodeSelect() {
+    var children = getAllChildren(graph.getDefaultParent().children[0]);
+    graph.selectCells(children);
+}
+
+function allEdgeSelect() {
+    graph.selectEdges();
 }
 
 function defaultStyleGraph() {
@@ -350,6 +387,7 @@ function verticalOrganization() {
     layout.horizontal = false;
     layout.nodeDistance = 50;
     layout.execute(graph.getDefaultParent());
+    fit();
 }
 
 //funzione per l'ordinamento delle grafico in modo orizzontale
@@ -363,6 +401,7 @@ function orizzontalOrganization() {
     layout.horizontal = true;
     layout.nodeDistance = 50;
     layout.execute(graph.getDefaultParent())
+    fit();
 }
 
 //funzione per l'ordinamento delle grafico in modo mindmap
@@ -372,6 +411,7 @@ function mindmapOrganization() {
     var organic = new mxFastOrganicLayout(graph);
     organic.forceConstant = 120;
     organic.execute(graph.getDefaultParent());
+    fit();
 }
 
 // funzione per la creazione del popupmenu alla pressione del tasto destro
