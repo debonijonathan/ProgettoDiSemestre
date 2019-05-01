@@ -212,6 +212,7 @@ function allElementSelect() {
 function allNodeSelect() {
     var children = getAllChildren(graph.getDefaultParent().children[0]);
     graph.selectCells(children);
+    //graph.selectChildCell(children);
 }
 
 function allEdgeSelect() {
