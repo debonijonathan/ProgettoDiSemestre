@@ -111,7 +111,7 @@ function main(container) {
             }
         });
 
-        //Aggiunta del nodo allo stesso livello di quello selezionato
+        //Delete del nodo allo stesso livello di quello selezionato
         keyHandler.bindKey(46, function (_evt) {
             var parent = graph.getModel().getCell(graph.getSelectionCell().getId());
             console.log(parent.style);
@@ -184,19 +184,21 @@ function main(container) {
         graph.dblClick = function (evt, cell) {
             var mxe = new mxEventObject(mxEvent.DOUBLE_CLICK, 'event', evt, 'cell', cell);
             this.fireEvent(mxe);
-
             if (this.isEnabled() && !mxEvent.isConsumed(evt) && !mxe.isConsumed()) {
-                mxUtils.alert('Hello, World!');
+                //mxUtils.alert('Hello, World!');
                 mxe.consume();
             }
         }
 
+       
+
     }
 }
 
+//function for fit graph into the container
 function fit() {
     var children = getAllChildren(graph.getDefaultParent().children[0]);
-    if (children.length >= 7) {
+    if (children.length >= 0) {
         graph.fit();
         graph.view.rendering = true;
         graph.refresh();
@@ -213,7 +215,8 @@ function allNodeSelect() {
 }
 
 function allEdgeSelect() {
-    graph.selectEdges();
+    var pippo = graph.selectEdges();
+    console.log(pippo);
 }
 
 function defaultStyleGraph() {
@@ -243,6 +246,7 @@ function thirdStyleFunction() {
     defaultEdgeStyle('#000000');
 }
 
+//funzione per ripristinare il clore originario di un arco
 function defaultEdgeStyle(newStyle) {
     var children = getAllChildren(graph.getDefaultParent().children[0]);
     if (children.length > 1) {
@@ -293,6 +297,7 @@ function changeNodeStyle(value1, value2, value3) {
     }
 }
 
+//funzione per cambiare il colore del contorno di un nodo
 function changeBorderColor(cell, value1, value2, value3) {
     var stylesheet = cell.style;
     if (graphStyle == 0) {
@@ -338,6 +343,7 @@ function removeLabels(children) {
     return pos;
 }
 
+//funzione per definire lo stile dei nodi del grafico
 function createStyleNote(graph, cell, name) {
     var model = graph.getModel();
     var style = new Array();
@@ -523,8 +529,10 @@ function createPopupMenu(editor, graph, menu, cell, _evt) {
             menu.addSeparator();
 
             menu.addItem('Edit label', 'img/pencil.png', function () {
-                //Setto la label in modo da editarlo
-                graph.startEditingAtCell(cell);
+                var newCellLabelValue  = mxUtils.prompt('Choose new node label name:', null);
+                graph.cellLabelChanged(cell, newCellLabelValue, true);
+                organizzationMethod(graphOrientation);
+                //graph.startEditingAtCell(cell);
             });
 
             menu.addItem('Edit Image', 'img/image.png', function () {
@@ -547,13 +555,6 @@ function createPopupMenu(editor, graph, menu, cell, _evt) {
         });
     }
 };
-
-function createPopupMenu2(graph, menu, cell, _evt) {
-    menu.addItem('Edit label', 'img/pencil.png', function () {
-        //Setto la label in modo da editarlo
-        graph.startEditingAtCell(cell);
-    });
-}
 
 function showProperties(graph, cell) {
     // Creates a form for the user object inside
@@ -622,6 +623,7 @@ function showModalWindow(title, content, width, height) {
     return wnd;
 };
 
+//funzione per controllare la sringa di input per il nome del colore
 function controllInput(input) {
     if (!/^[a-zA-Z]*$/g.test(input))
         return true;
@@ -682,6 +684,7 @@ function setStyle(style, value1, value2, value3) {
     style[mxConstants.STYLE_IMAGE_HEIGHT] = '30';
 }
 
+//funzione per il impostare il colore didefault degli archi
 function setEdgeStyle(style) {
     style[mxConstants.STYLE_STROKEWIDTH] = 3;
     style[mxConstants.STYLE_STROKECOLOR] = '#000000';
@@ -853,6 +856,7 @@ function printAllNodeAt(altezza) {
 function deleteNode(graph, cell) {
     // Salvo tutti i nodi figli di cell
     var children = getAllChildren(cell);
+    console.log(changeBorderColor);
     // rimuovo tutti i figli
     graph.removeCells(children);
     //funzione per vedere quale label è stata cancellata e se è stata cancellata
