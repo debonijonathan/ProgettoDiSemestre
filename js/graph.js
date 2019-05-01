@@ -181,14 +181,14 @@ function main(container) {
             showProperties(graph, cell);
         });
 
-        graph.dblClick = function (evt, cell) {
+        /*graph.dblClick = function (evt, cell) {
             var mxe = new mxEventObject(mxEvent.DOUBLE_CLICK, 'event', evt, 'cell', cell);
             this.fireEvent(mxe);
             if (this.isEnabled() && !mxEvent.isConsumed(evt) && !mxe.isConsumed()) {
                 //mxUtils.alert('Hello, World!');
                 mxe.consume();
             }
-        }
+        }**/
 
        
 
