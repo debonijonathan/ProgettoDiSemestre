@@ -12,6 +12,7 @@
 var graph;
 var editor;
 var style;
+var edgeStyle;
 var cellImage;
 var createCell;
 var levelIsSetted = [false, false, false, false];
@@ -19,6 +20,10 @@ var graphOrientation = 0;
 var graphStyle = 0;
 var doc = mxUtils.createXmlDocument();
 var fitIsActive;
+
+var nodeColor;
+var borderColor;
+var edgeColor;
 
 //funzione per la creazione/manipolazione del grafico 
 function main(container) {
@@ -54,8 +59,8 @@ function main(container) {
         setStyle(style, '#ffd700', '#db1818', '#ffa500');
 
         // Impostazione dello stile di default dei collegamenti ai nodi
-        var edgeStyle = graph.getStylesheet().getDefaultEdgeStyle();
-        setEdgeStyle(edgeStyle);
+        edgeStyle = graph.getStylesheet().getDefaultEdgeStyle();
+        setEdgeStyle(edgeStyle, '#000000');
 
         //Impostiamo la scala minima a 1
         graph.cellRenderer.getTextScale = function (state) {
@@ -189,9 +194,6 @@ function main(container) {
                 mxe.consume();
             }
         }**/
-
-       
-
     }
 }
 
@@ -224,7 +226,7 @@ function defaultStyleGraph() {
     graphStyle = 0;
     //imposto il colore per tutti i nodi del grafo
     changeStyle(setStyle(style, '#ffd700', '#db1818', '#ffa500'));
-    //colo il bordo dei nodi del livello 1 e livello 2
+    //coloro il bordo dei nodi del livello 1 e livello 2
     changeNodeStyle('red', '#ffd700', '#ffa500');
     defaultEdgeStyle('#000000');
 }
@@ -233,7 +235,7 @@ function secondStyleGraph() {
     graphStyle = 1;
     //imposto il colore per tutti i nodi del grafo
     changeStyle(setStyle(style, '#808080', '#000000', '#808080'));
-    //colo il bordo dei nodi del livello 1 e livello 2
+    //coloro il bordo dei nodi del livello 1 e livello 2
     changeNodeStyle('black', '#808080', '#808080');
     defaultEdgeStyle('#000000');
 }
@@ -242,9 +244,31 @@ function thirdStyleFunction() {
     graphStyle = 2;
     //imposto il colore per tutti i nodi del grafo
     changeStyle(setStyle(style, '#ffffff', '#000000', '#ffffff'));
-    //colo il bordo dei nodi del livello 1 e livello 2
+    //coloro il bordo dei nodi del livello 1 e livello 2
     changeNodeStyle('black', '#ffffff', '#ffffff');
     defaultEdgeStyle('#000000');
+}
+
+function personalStyleFunction() {
+    graphStyle = 3;
+    if (nodeColor == null && borderColor == null && edgeColor == null) {
+        var values = mxUtils.prompt('Insert the values of node, border, edge color:', null);
+        var res = values.split(", ");
+        if (res.length == 3) {
+            nodeColor = res[0];
+            borderColor = res[1];
+            edgeColor = res[2];
+        } else {
+            nodeColor = res[0];
+            borderColor = 'black';
+            edgeColor = 'black';
+        }
+    }
+    //imposto il colore per tutti i nodi del grafo
+    changeStyle(setStyle(style, nodeColor, '#000000', nodeColor));
+    //coloro il bordo dei nodi del livello 1 e livello 2
+    changeNodeStyle(borderColor, nodeColor, nodeColor);
+    defaultEdgeStyle(edgeColor);
 }
 
 //funzione per ripristinare il clore originario di un arco
@@ -299,7 +323,7 @@ function changeNodeStyle(value1, value2, value3) {
 }
 
 //funzione per cambiare il colore del contorno di un nodo
-function changeBorderColor(cell, value1, value2, value3) {
+function changeBorderColor(cell, value1, value2, value3, value4) {
     var stylesheet = cell.style;
     if (graphStyle == 0) {
         cell.style = stylesheet + ';strokeColor=' + value1 + ';';
@@ -307,14 +331,16 @@ function changeBorderColor(cell, value1, value2, value3) {
         cell.style = stylesheet + ';strokeColor=' + value2 + ';';
     } else if (graphStyle == 2) {
         cell.style = stylesheet + ';strokeColor=' + value3 + ';';
+    } else if (graphStyle == 3) {
+        cell.style = stylesheet + ';strokeColor=' + value4 + ';';
     }
 }
 
 function borderColorAddNode(cell) {
     if (cell.myId == 1) {
-        changeBorderColor(cell, '#db1818', '#000000', '#000000');
+        changeBorderColor(cell, '#db1818', '#000000', '#000000', borderColor);
     } else {
-        changeBorderColor(cell, '#ffd700', '#808080', '#ffffff');
+        changeBorderColor(cell, '#ffd700', '#808080', '#ffffff', nodeColor);
     }
     return cell;
 }
@@ -522,15 +548,29 @@ function createPopupMenu(editor, graph, menu, cell, _evt) {
                 }
             });
 
-            menu.addItem('Properties', 'images/properties.gif', function () {
+            menu.addItem('Select personal style', null, function () {
+                var values = mxUtils.prompt('Insert the values of node, border, edge color:', null);
+                var res = values.split(", ");
+                if (res.length == 3) {
+                    nodeColor = res[0];
+                    borderColor = res[1];
+                    edgeColor = res[2];
+                } else {
+                    nodeColor = res[0];
+                    borderColor = 'black';
+                    edgeColor = 'black';
+                }
+            });
+
+            /*menu.addItem('Properties', 'images/properties.gif', function () {
                 var cell = graph.getSelectionCell();
                 //editor.execute('properties', cell);
-            });
+            }); **/
 
             menu.addSeparator();
 
             menu.addItem('Edit label', 'img/pencil.png', function () {
-                var newCellLabelValue  = mxUtils.prompt('Choose new node label name:', null);
+                var newCellLabelValue = mxUtils.prompt('Choose new node label name:', null);
                 graph.cellLabelChanged(cell, newCellLabelValue, true);
                 organizzationMethod(graphOrientation);
                 //graph.startEditingAtCell(cell);
@@ -557,72 +597,72 @@ function createPopupMenu(editor, graph, menu, cell, _evt) {
     }
 };
 
-function showProperties(graph, cell) {
-    // Creates a form for the user object inside
-    // the cell
-    var form = new mxForm('properties');
+// function showProperties(graph, cell) {
+//     // Creates a form for the user object inside
+//     // the cell
+//     var form = new mxForm('properties');
 
-    // Adds a field for the columnname
-    var idField = form.addText('Id', cell.id);
+//     // Adds a field for the columnname
+//     var idField = form.addText('Id', cell.id);
 
-    var xField = form.addText('X', cell.geometry.x);
-    var yField = form.addText('Y', cell.geometry.y);
+//     var xField = form.addText('X', cell.geometry.x);
+//     var yField = form.addText('Y', cell.geometry.y);
 
-    var wnd = null;
+//     var wnd = null;
 
-    // Defines the function to be executed when the
-    // OK button is pressed in the dialog
-    var okFunction = function () {
-        cell.geometry.x = xField.value;
-        cell.geometry.y = yField.value;
-        wnd.destroy();
-    }
+//     // Defines the function to be executed when the
+//     // OK button is pressed in the dialog
+//     var okFunction = function () {
+//         cell.geometry.x = xField.value;
+//         cell.geometry.y = yField.value;
+//         wnd.destroy();
+//     }
 
-    // Defines the function to be executed when the
-    // Cancel button is pressed in the dialog
-    var cancelFunction = function () {
-        wnd.destroy();
-    }
-    form.addButtons(okFunction, cancelFunction);
+//     // Defines the function to be executed when the
+//     // Cancel button is pressed in the dialog
+//     var cancelFunction = function () {
+//         wnd.destroy();
+//     }
+//     form.addButtons(okFunction, cancelFunction);
 
-    var parent = graph.model.getParent(cell);
-    wnd = showModalWindow('Properties', form.table, 10, 10);
-};
+//     var parent = graph.model.getParent(cell);
+//     wnd = showModalWindow('Properties', form.table, 10, 10);
+// };
 
-function showModalWindow(title, content, width, height) {
+// function showModalWindow(title, content, width, height) {
 
-    var background = document.createElement('div');
-    background.style.position = 'absolute';
-    background.style.left = '0px';
-    background.style.top = '0px';
-    background.style.right = '0px';
-    background.style.bottom = '0px';
-    background.style.background = 'black';
-    mxUtils.setOpacity(background, 50);
-    document.activeElement.appendChild(background);
+//     var background = document.createElement('div');
+//     background.style.position = 'absolute';
+//     background.style.left = '0px';
+//     background.style.top = '0px';
+//     background.style.right = '0px';
+//     background.style.bottom = '0px';
+//     background.style.background = 'black';
+//     mxUtils.setOpacity(background, 50);
+//     document.activeElement.appendChild(background);
 
-    if (mxClient.IS_QUIRKS) {
-        new mxDivResizer(background);
-    }
+//     if (mxClient.IS_QUIRKS) {
+//         new mxDivResizer(background);
+//     }
 
-    var x = Math.max(0, document.body.scrollWidth / 2 - width / 2);
-    var y = Math.max(10, (document.body.scrollHeight ||
-        document.documentElement.scrollHeight) / 2 - height * 2 / 3);
-    var wnd = new mxWindow(title, content, 100, 100, width, height, false, true);
-    wnd.setClosable(true);
+//     var x = Math.max(0, document.body.scrollWidth / 2 - width / 2);
+//     var y = Math.max(10, (document.body.scrollHeight ||
+//         document.documentElement.scrollHeight) / 2 - height * 2 / 3);
+//     var wnd = new mxWindow(title, content, 100, 100, width, height, false, true);
+//     wnd.setClosable(true);
 
-    // Fades the background out after after the window has been closed
-    wnd.addListener(mxEvent.DESTROY, function (_evt) {
-        mxEffects.fadeOut(background, 50, true,
-            10, 30, true);
-    });
+//     // Fades the background out after after the window has been closed
+//     wnd.addListener(mxEvent.DESTROY, function (_evt) {
+//         mxEffects.fadeOut(background, 50, true,
+//             10, 30, true);
+//     });
 
-    wnd.setVisible(true);
+//     wnd.setVisible(true);
 
-    console.log(wnd);
+//     console.log(wnd);
 
-    return wnd;
-};
+//     return wnd;
+// };
 
 //funzione per controllare la sringa di input per il nome del colore
 function controllInput(input) {
@@ -686,9 +726,9 @@ function setStyle(style, value1, value2, value3) {
 }
 
 //funzione per il impostare il colore didefault degli archi
-function setEdgeStyle(style) {
+function setEdgeStyle(style, value) {
     style[mxConstants.STYLE_STROKEWIDTH] = 3;
-    style[mxConstants.STYLE_STROKECOLOR] = '#000000';
+    style[mxConstants.STYLE_STROKECOLOR] = value;
 }
 
 //funzione per poter visualizzare il pulsante elimina e aggiungi nodo
