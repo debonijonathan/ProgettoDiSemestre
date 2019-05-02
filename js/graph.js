@@ -182,10 +182,6 @@ function main(container) {
             mxUtils.show(graph, null, 100, 100);
         };
 
-        editor.addAction('properties', function (editor, cell) {
-            showProperties(graph, cell);
-        });
-
         /*graph.dblClick = function (evt, cell) {
             var mxe = new mxEventObject(mxEvent.DOUBLE_CLICK, 'event', evt, 'cell', cell);
             this.fireEvent(mxe);
@@ -218,8 +214,16 @@ function allNodeSelect() {
 }
 
 function allEdgeSelect() {
-    var pippo = graph.selectEdges();
-    console.log(pippo);
+    graph.selectEdges();
+}
+
+function changeEdgeStyle(value) {
+    graph.getModel().beginUpdate();
+    try {
+        setEdgeStyle(edgeStyle, value);
+    } finally {
+        graph.getModel().endUpdate();
+    }
 }
 
 function defaultStyleGraph() {
@@ -228,7 +232,11 @@ function defaultStyleGraph() {
     changeStyle(setStyle(style, '#ffd700', '#db1818', '#ffa500'));
     //coloro il bordo dei nodi del livello 1 e livello 2
     changeNodeStyle('red', '#ffd700', '#ffa500');
+    //metodo per cambiare il colore degli archi presenti sul grafo
     defaultEdgeStyle('#000000');
+    //imposto il colore dei prossimi archi che si creano, in modo da avere gli archi 
+    //dello stesso colore di quelli che ho già
+    changeEdgeStyle('#000000');
 }
 
 function secondStyleGraph() {
@@ -237,7 +245,11 @@ function secondStyleGraph() {
     changeStyle(setStyle(style, '#808080', '#000000', '#808080'));
     //coloro il bordo dei nodi del livello 1 e livello 2
     changeNodeStyle('black', '#808080', '#808080');
+     //metodo per cambiare il colore degli archi presenti sul grafo
     defaultEdgeStyle('#000000');
+     //imposto il colore dei prossimi archi che si creano, in modo da avere gli archi 
+    //dello stesso colore di quelli che ho già
+    changeEdgeStyle('#000000');
 }
 
 function thirdStyleFunction() {
@@ -246,29 +258,46 @@ function thirdStyleFunction() {
     changeStyle(setStyle(style, '#ffffff', '#000000', '#ffffff'));
     //coloro il bordo dei nodi del livello 1 e livello 2
     changeNodeStyle('black', '#ffffff', '#ffffff');
+     //metodo per cambiare il colore degli archi presenti sul grafo
     defaultEdgeStyle('#000000');
+     //imposto il colore dei prossimi archi che si creano, in modo da avere gli archi 
+    //dello stesso colore di quelli che ho già
+    changeEdgeStyle('#000000');
 }
 
-function personalStyleFunction() {
-    graphStyle = 3;
+function personalStyleInputControll() {
     if (nodeColor == null && borderColor == null && edgeColor == null) {
         var values = mxUtils.prompt('Insert the values of node, border, edge color:', null);
         var res = values.split(", ");
-        if (res.length == 3) {
+        if (res.length == 3 && res[0] != 'black') {
             nodeColor = res[0];
             borderColor = res[1];
             edgeColor = res[2];
-        } else {
+        } else if (res[0] != 'black') {
+            console.log('entro');
             nodeColor = res[0];
+            borderColor = 'black';
+            edgeColor = 'black';
+        } else {
+            nodeColor = 'white';
             borderColor = 'black';
             edgeColor = 'black';
         }
     }
+}
+
+function personalStyleFunction() {
+    graphStyle = 3;
+    personalStyleInputControll();
     //imposto il colore per tutti i nodi del grafo
     changeStyle(setStyle(style, nodeColor, '#000000', nodeColor));
     //coloro il bordo dei nodi del livello 1 e livello 2
     changeNodeStyle(borderColor, nodeColor, nodeColor);
+     //metodo per cambiare il colore degli archi presenti sul grafo
     defaultEdgeStyle(edgeColor);
+     //imposto il colore dei prossimi archi che si creano, in modo da avere gli archi 
+    //dello stesso colore di quelli che ho già
+    changeEdgeStyle(edgeColor);
 }
 
 //funzione per ripristinare il clore originario di un arco
@@ -336,6 +365,7 @@ function changeBorderColor(cell, value1, value2, value3, value4) {
     }
 }
 
+//funzione per il colore dei bordi dei nodi
 function borderColorAddNode(cell) {
     if (cell.myId == 1) {
         changeBorderColor(cell, '#db1818', '#000000', '#000000', borderColor);
@@ -502,7 +532,8 @@ function createPopupMenu(editor, graph, menu, cell, _evt) {
 
             menu.addSeparator();
 
-            menu.addItem('Change node color', null, function () {
+            //cambiare il colore del nodo
+            menu.addItem('Change node color', 'images/color.png', function () {
                 var cell = graph.getSelectionCell();
                 if (cell != null) {
                     var stylesheet = cell.style;
@@ -517,7 +548,8 @@ function createPopupMenu(editor, graph, menu, cell, _evt) {
                 }
             });
 
-            menu.addItem('Change border color', null, function () {
+             //cambiare il colore del bordo del nodo
+            menu.addItem('Change border color', 'images/color.png', function () {
                 var cell = graph.getSelectionCell();
                 if (cell != null) {
                     var stylesheet = cell.style;
@@ -532,7 +564,8 @@ function createPopupMenu(editor, graph, menu, cell, _evt) {
                 }
             });
 
-            menu.addItem('Change edges color', null, function () {
+            //cambiare il colore di tutti gli archi di quel nodo
+            menu.addItem('Change edges color', 'images/color.png', function () {
                 var edges = graph.getSelectionCell().edges;
                 if (edges != null) {
                     var newStyle = mxUtils.prompt('Choose new edges color(English name):', null);
@@ -548,18 +581,9 @@ function createPopupMenu(editor, graph, menu, cell, _evt) {
                 }
             });
 
-            menu.addItem('Select personal style', null, function () {
-                var values = mxUtils.prompt('Insert the values of node, border, edge color:', null);
-                var res = values.split(", ");
-                if (res.length == 3) {
-                    nodeColor = res[0];
-                    borderColor = res[1];
-                    edgeColor = res[2];
-                } else {
-                    nodeColor = res[0];
-                    borderColor = 'black';
-                    edgeColor = 'black';
-                }
+            //per selezionare il colore dello stile personale
+            menu.addItem('Select personal style', 'images/color.png', function () {
+                personalStyleInputControll();
             });
 
             /*menu.addItem('Properties', 'images/properties.gif', function () {
