@@ -27,10 +27,9 @@ var edgeColor;
 
 //funzione per la creazione/manipolazione del grafico 
 function main(container) {
-    // Checks if browser is supported
+    // controllo se il broswer supporta MxGraph
     if (!mxClient.isBrowserSupported()) {
-        // Displays an error message if the browser is
-        // not supported.
+        // Messaggio di errore se non supportato
         mxUtils.error('Browser is not supported!', 200, false);
     }
     else {
@@ -92,7 +91,7 @@ function main(container) {
             graph.getModel().endUpdate();
         }
 
-        // Installs a popupmenu handler using local function (see below).
+        // Creazione di un popupmenu
         graph.popupMenuHandler.factoryMethod = function (menu, cell, evt) {
             return createPopupMenu(editor, graph, menu, cell, evt);
         };
@@ -181,19 +180,10 @@ function main(container) {
         document.getElementById("show").onclick = function () {
             mxUtils.show(graph, null, 100, 100);
         };
-
-        /*graph.dblClick = function (evt, cell) {
-            var mxe = new mxEventObject(mxEvent.DOUBLE_CLICK, 'event', evt, 'cell', cell);
-            this.fireEvent(mxe);
-            if (this.isEnabled() && !mxEvent.isConsumed(evt) && !mxe.isConsumed()) {
-                //mxUtils.alert('Hello, World!');
-                mxe.consume();
-            }
-        }**/
     }
 }
 
-//function for fit graph into the container
+// funzione per fare il fit del grafico nel container
 function fit() {
     var children = getAllChildren(graph.getDefaultParent().children[0]);
     if (children.length >= 0) {
@@ -210,7 +200,6 @@ function allElementSelect() {
 function allNodeSelect() {
     var children = getAllChildren(graph.getDefaultParent().children[0]);
     graph.selectCells(children);
-    //graph.selectChildCell(children);
 }
 
 function allEdgeSelect() {
@@ -285,7 +274,7 @@ function personalStyleInputControll() {
         }
     }
 }
-
+// impostiamo il nostro stile personale
 function personalStyleFunction() {
     graphStyle = 3;
     personalStyleInputControll();
@@ -586,10 +575,6 @@ function createPopupMenu(editor, graph, menu, cell, _evt) {
                 personalStyleInputControll();
             });
 
-            /*menu.addItem('Properties', 'images/properties.gif', function () {
-                var cell = graph.getSelectionCell();
-                //editor.execute('properties', cell);
-            }); **/
 
             menu.addSeparator();
 
@@ -597,7 +582,6 @@ function createPopupMenu(editor, graph, menu, cell, _evt) {
                 var newCellLabelValue = mxUtils.prompt('Choose new node label name:', null);
                 graph.cellLabelChanged(cell, newCellLabelValue, true);
                 organizzationMethod(graphOrientation);
-                //graph.startEditingAtCell(cell);
             });
 
             menu.addItem('Edit Image', 'img/image.png', function () {
@@ -621,72 +605,6 @@ function createPopupMenu(editor, graph, menu, cell, _evt) {
     }
 };
 
-// function showProperties(graph, cell) {
-//     // Creates a form for the user object inside
-//     // the cell
-//     var form = new mxForm('properties');
-
-//     // Adds a field for the columnname
-//     var idField = form.addText('Id', cell.id);
-
-//     var xField = form.addText('X', cell.geometry.x);
-//     var yField = form.addText('Y', cell.geometry.y);
-
-//     var wnd = null;
-
-//     // Defines the function to be executed when the
-//     // OK button is pressed in the dialog
-//     var okFunction = function () {
-//         cell.geometry.x = xField.value;
-//         cell.geometry.y = yField.value;
-//         wnd.destroy();
-//     }
-
-//     // Defines the function to be executed when the
-//     // Cancel button is pressed in the dialog
-//     var cancelFunction = function () {
-//         wnd.destroy();
-//     }
-//     form.addButtons(okFunction, cancelFunction);
-
-//     var parent = graph.model.getParent(cell);
-//     wnd = showModalWindow('Properties', form.table, 10, 10);
-// };
-
-// function showModalWindow(title, content, width, height) {
-
-//     var background = document.createElement('div');
-//     background.style.position = 'absolute';
-//     background.style.left = '0px';
-//     background.style.top = '0px';
-//     background.style.right = '0px';
-//     background.style.bottom = '0px';
-//     background.style.background = 'black';
-//     mxUtils.setOpacity(background, 50);
-//     document.activeElement.appendChild(background);
-
-//     if (mxClient.IS_QUIRKS) {
-//         new mxDivResizer(background);
-//     }
-
-//     var x = Math.max(0, document.body.scrollWidth / 2 - width / 2);
-//     var y = Math.max(10, (document.body.scrollHeight ||
-//         document.documentElement.scrollHeight) / 2 - height * 2 / 3);
-//     var wnd = new mxWindow(title, content, 100, 100, width, height, false, true);
-//     wnd.setClosable(true);
-
-//     // Fades the background out after after the window has been closed
-//     wnd.addListener(mxEvent.DESTROY, function (_evt) {
-//         mxEffects.fadeOut(background, 50, true,
-//             10, 30, true);
-//     });
-
-//     wnd.setVisible(true);
-
-//     console.log(wnd);
-
-//     return wnd;
-// };
 
 //funzione per controllare la sringa di input per il nome del colore
 function controllInput(input) {
@@ -874,7 +792,7 @@ function deleteChildrenHaveLabel(children, _graph) {
         }
     }
 }
-
+// funziona per l'aggiunta di label
 function addLabel(vertex, pos) {
     var x = -1;
     var y = 0.5;
@@ -946,39 +864,6 @@ function downloadFile() {
 function openForm() {
     location.href = "#popupexport";
 }
-
-/*function getFile(accepted) {
-    document.getElementById('myFile').accept = accepted;
-    document.getElementById('myFile').click();
-    var x = document.getElementById("myFile");
-    var txt = "";
-    if ('files' in x) {
-        if (x.files.length == 0) {
-            txt = "Select one or more files.";
-        } else {
-            for (var i = 0; i < x.files.length; i++) {
-                txt += "<br><strong>" + (i + 1) + ". file</strong><br>";
-                var file = x.files[i];
-                if ('name' in file) {
-                    txt += "name: " + file.name + "<br>";
-                }
-                if ('size' in file) {
-                    txt += "size: " + file.size + " bytes <br>";
-                }
-            }
-        }
-    }
-    else {
-        if (x.value == "") {
-            txt += "Select one or more files.";
-        } else {
-            txt += "The files property is not supported by your browser!";
-            txt += "<br>The path of the selected file: " + x.value; // If the browser does not support the files property, it will return the path of the selected file instead. 
-        }
-    }
-    //document.getElementById("demo").innerHTML = txt;
-    return txt;
-}*/
 
 //funzione per l'upload e la visualizzazione dell'immagine sul server
 function exportFileImage() {
