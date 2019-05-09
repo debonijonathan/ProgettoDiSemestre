@@ -186,7 +186,7 @@ function main(container) {
 // funzione per fare il fit del grafico nel container
 function fit() {
     var children = getAllChildren(graph.getDefaultParent().children[0]);
-    if (children.length >= 0) {
+    if (children.length >= 6) {
         graph.fit();
         graph.view.rendering = true;
         graph.refresh();
