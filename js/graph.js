@@ -268,41 +268,71 @@ function thirdStyleFunction() {
     changeEdgeStyle('#000000');
 }
 
-function personalStyleInputControll() {
-    if (nodeColor == null && borderColor == null && edgeColor == null) {
-        var values = mxUtils.prompt('Insert the values of node, border, edge color:', null);
-        if (controllInput) {
-            var res = values.split(", ");
-            if (res.length == 3 && res[0] != 'black') {
-                nodeColor = res[0];
-                borderColor = res[1];
-                edgeColor = res[2];
-            } else if (res[0] != 'black') {
-                console.log('entro');
-                nodeColor = res[0];
-                borderColor = 'black';
-                edgeColor = 'black';
-            } else {
-                nodeColor = 'white';
-                borderColor = 'black';
-                edgeColor = 'black';
+function checkColor(colorArray) {
+    var cnt = 0;
+    for (var i = 0; i < colorArray.length; i++) {
+        if (colorArray[i].length != 0) {
+            if (controllInput(colorArray[i]) == false) {
+                cnt++;
             }
         }
     }
+    if (cnt == colorArray.length) {
+        return true;
+    }
+    return false;
+}
+
+function insertPersonalStyle() {
+    var values = mxUtils.prompt('Insert the values of node, border, edge color:', null);
+    var res = values.split(", ");
+    if (checkColor(res)) {
+        if (res.length == 3 && res[0] != 'black') {
+            nodeColor = res[0];
+            borderColor = res[1];
+            edgeColor = res[2];
+        } else if (res.length == 2 && res[0] != 'black') {
+            nodeColor = res[0];
+            borderColor = res[1];
+            edgeColor = 'black';
+        } else if (res[0] != 'black') {
+            console.log('entro');
+            nodeColor = res[0];
+            borderColor = 'black';
+            edgeColor = 'black';
+        } else {
+            nodeColor = 'white';
+            borderColor = 'black';
+            edgeColor = 'black';
+        }
+        return true;
+    } else {
+        alert('Errore valore di input non permesso (solo lettere)');
+        return false;
+    }
+}
+
+
+function personalStyleInputControll() {
+    if (nodeColor == null && borderColor == null && edgeColor == null) {
+        return insertPersonalStyle();
+    }
+    return true;
 }
 // impostiamo il nostro stile personale
 function personalStyleFunction() {
     graphStyle = 3;
-    personalStyleInputControll();
-    //imposto il colore per tutti i nodi del grafo
-    changeStyle(setStyle(style, nodeColor, '#000000', nodeColor));
-    //coloro il bordo dei nodi del livello 1 e livello 2
-    changeNodeStyle(borderColor, nodeColor, nodeColor);
-    //metodo per cambiare il colore degli archi presenti sul grafo
-    defaultEdgeStyle(edgeColor);
-    //imposto il colore dei prossimi archi che si creano, in modo da avere gli archi 
-    //dello stesso colore di quelli che ho già
-    changeEdgeStyle(edgeColor);
+    if (personalStyleInputControll()) {
+        //imposto il colore per tutti i nodi del grafo
+        changeStyle(setStyle(style, nodeColor, '#000000', nodeColor));
+        //coloro il bordo dei nodi del livello 1 e livello 2
+        changeNodeStyle(borderColor, nodeColor, nodeColor);
+        //metodo per cambiare il colore degli archi presenti sul grafo
+        defaultEdgeStyle(edgeColor);
+        //imposto il colore dei prossimi archi che si creano, in modo da avere gli archi 
+        //dello stesso colore di quelli che ho già
+        changeEdgeStyle(edgeColor);
+    }
 }
 
 //funzione per ripristinare il clore originario di un arco
@@ -588,7 +618,7 @@ function createPopupMenu(editor, graph, menu, cell, _evt) {
 
             //per selezionare il colore dello stile personale
             menu.addItem('Select personal style', 'images/color.png', function () {
-                personalStyleInputControll();
+                insertPersonalStyle();
             });
 
 
@@ -626,6 +656,7 @@ function controllInput(input) {
         return true;
     return false;
 }
+
 
 //funzione per l'aggiunta/gestione del todo
 function addTodo(graph, cell) {
@@ -952,6 +983,4 @@ function importXML() {
     xhttp.open("POST", "reader.php", true);
     xhttp.send(formData);
     organizzationMethod(graphOrientation);
-    fitIsActive = true;
-    fit();
 }
