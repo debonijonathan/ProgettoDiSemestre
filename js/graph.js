@@ -180,6 +180,20 @@ function main(container) {
         document.getElementById("show").onclick = function () {
             mxUtils.show(graph, null, 100, 100);
         };
+
+        graph.dblClick = function (evt, cell) {
+            checkLabel(cell);
+        }
+    }
+}
+
+function checkLabel(cell) {
+    var newCellLabelValue = mxUtils.prompt('Choose new node label name:', null);
+    if (newCellLabelValue.length > 25) {
+        alert('Dimensione massima supearata (MAX 25 caratteri)');
+    } else {
+        graph.cellLabelChanged(cell, newCellLabelValue, true);
+        organizzationMethod(graphOrientation);
     }
 }
 
@@ -234,9 +248,9 @@ function secondStyleGraph() {
     changeStyle(setStyle(style, '#808080', '#000000', '#808080'));
     //coloro il bordo dei nodi del livello 1 e livello 2
     changeNodeStyle('black', '#808080', '#808080');
-     //metodo per cambiare il colore degli archi presenti sul grafo
+    //metodo per cambiare il colore degli archi presenti sul grafo
     defaultEdgeStyle('#000000');
-     //imposto il colore dei prossimi archi che si creano, in modo da avere gli archi 
+    //imposto il colore dei prossimi archi che si creano, in modo da avere gli archi 
     //dello stesso colore di quelli che ho già
     changeEdgeStyle('#000000');
 }
@@ -247,9 +261,9 @@ function thirdStyleFunction() {
     changeStyle(setStyle(style, '#ffffff', '#000000', '#ffffff'));
     //coloro il bordo dei nodi del livello 1 e livello 2
     changeNodeStyle('black', '#ffffff', '#ffffff');
-     //metodo per cambiare il colore degli archi presenti sul grafo
+    //metodo per cambiare il colore degli archi presenti sul grafo
     defaultEdgeStyle('#000000');
-     //imposto il colore dei prossimi archi che si creano, in modo da avere gli archi 
+    //imposto il colore dei prossimi archi che si creano, in modo da avere gli archi 
     //dello stesso colore di quelli che ho già
     changeEdgeStyle('#000000');
 }
@@ -282,9 +296,9 @@ function personalStyleFunction() {
     changeStyle(setStyle(style, nodeColor, '#000000', nodeColor));
     //coloro il bordo dei nodi del livello 1 e livello 2
     changeNodeStyle(borderColor, nodeColor, nodeColor);
-     //metodo per cambiare il colore degli archi presenti sul grafo
+    //metodo per cambiare il colore degli archi presenti sul grafo
     defaultEdgeStyle(edgeColor);
-     //imposto il colore dei prossimi archi che si creano, in modo da avere gli archi 
+    //imposto il colore dei prossimi archi che si creano, in modo da avere gli archi 
     //dello stesso colore di quelli che ho già
     changeEdgeStyle(edgeColor);
 }
@@ -537,7 +551,7 @@ function createPopupMenu(editor, graph, menu, cell, _evt) {
                 }
             });
 
-             //cambiare il colore del bordo del nodo
+            //cambiare il colore del bordo del nodo
             menu.addItem('Change border color', 'images/color.png', function () {
                 var cell = graph.getSelectionCell();
                 if (cell != null) {
@@ -579,9 +593,7 @@ function createPopupMenu(editor, graph, menu, cell, _evt) {
             menu.addSeparator();
 
             menu.addItem('Edit label', 'img/pencil.png', function () {
-                var newCellLabelValue = mxUtils.prompt('Choose new node label name:', null);
-                graph.cellLabelChanged(cell, newCellLabelValue, true);
-                organizzationMethod(graphOrientation);
+                checkLabel(cell);
             });
 
             menu.addItem('Edit Image', 'img/image.png', function () {
