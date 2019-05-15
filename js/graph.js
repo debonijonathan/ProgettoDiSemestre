@@ -108,8 +108,11 @@ function main(container) {
         //Aggiunta del nodo tramite tasto enter
         keyHandler.bindKey(13, function (_evt) {
             if (graph.isEnabled()) {
-                var parent = graph.getDefaultParent().children[0];
-                if (parent.getId() != 1 && parent != null) {
+
+                var parent = graph.getModel().getCell(graph.getSelectionCell().myparent);
+
+                if(parent.getId() != 1){
+                    console.log(parent.getId());
                     addNode(graph, parent);
                 }
             }
