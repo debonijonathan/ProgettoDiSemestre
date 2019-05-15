@@ -75,7 +75,7 @@ function main(container) {
             //grandezza della pagina
             var w = graph.container.offsetWidth;
             //inserimento del nodo nella posizione corretta
-            var root = graph.insertVertex(parent, null, 'TITLE', (w / 2) - 100, 90, 5, 5, 'image=img/logo.png');
+            var root = graph.insertVertex(parent, null, 'TITLE', (w / 2) - 100, 90, 5, 5, 'image=img/logo.png;');
             //id for level label
             var rootLabel = graph.insertVertex(root, null, 'Level 1', -1, 0.5, 0, 0, null, true);
             root.myId = 0;
@@ -586,7 +586,6 @@ function createPopupMenu(editor, graph, menu, cell, _evt) {
                         if (controllInput(newStyle)) {
                             alert('Sono permesse solo lettere!');
                         } else {
-                            console.log(cell.style);
                             if (stylesheet.includes("strokeColor")) {
                                 var res = stylesheet.split(";");
                                 var strokeColor;
@@ -598,7 +597,6 @@ function createPopupMenu(editor, graph, menu, cell, _evt) {
                             } else
                                 cell.style = stylesheet + 'gradientColor=' + newStyle + ';' + 'fillColor=' + newStyle + ';';
                             graph.refresh();
-                            console.log(cell.style);
                         }
                 }
             });
@@ -613,13 +611,14 @@ function createPopupMenu(editor, graph, menu, cell, _evt) {
                         if (controllInput(newStyle)) {
                             alert('Sono permesse solo lettere!');
                         } else {
+                            console.log(stylesheet);
                             if (stylesheet.includes("strokeColor")) {
-                                console.log(stylesheet);
                                 var res = stylesheet.split("strokeColor=");
                                 cell.style = res[0] + 'strokeColor=' + newStyle + ';';
-                                graph.refresh();
-                                console.log(cell.style);
-                            }
+                            } else
+                                cell.style = stylesheet + 'strokeColor=' + newStyle + ';';
+                            console.log(cell.style);
+                            graph.refresh();
                         }
                 }
             });
