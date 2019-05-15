@@ -952,4 +952,5 @@ function importXML() {
     xhttp.open("POST", "reader.php", true);
     xhttp.send(formData);
     organizzationMethod(graphOrientation);
+    fit();
 }
