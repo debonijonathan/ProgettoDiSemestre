@@ -379,7 +379,7 @@ function changeNodeStyle(value1, value2, value3) {
         var children = getAllChildren(graph.getDefaultParent().children[0]);
         var stylesheet;
         if (children != null) {
-            for (var i = 1; i < children.length; i++) {
+            for (var i = 0; i < children.length; i++) {
                 var n = children[i].style.indexOf(";");
                 var nodeSubStyle = children[i].style.substring(0, n + 1);
                 stylesheet = nodeSubStyle + 'gradientColor=' + value2 + ';' + 'fillColor=' + value3 + ';';
