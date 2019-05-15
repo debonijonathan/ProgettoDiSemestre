@@ -922,11 +922,21 @@ function exportFileImage() {
         if (this.readyState == 4 && this.status == 200) {
             var model = graph.getModel();
             //impostiamo lo stile
-            var style = new Array();
-            style[mxConstants.STYLE_IMAGE] = this.responseText;
+            //var style = new Array();
+            //style[mxConstants.STYLE_IMAGE] = this.responseText;
 
-            graph.stylesheet.putCellStyle(this.responseText, style);
-            model.setStyle(cellImage, this.responseText);
+            var cell = graph.getSelectionCell();
+                if (cell != null) {
+                    var stylesheet = cell.style;
+                    var n = stylesheet.indexOf(";");
+                    var res = stylesheet.substring(n+1, stylesheet.length);
+                    console.log(res);
+                    cell.style = 'image='+this.responseText+';'+res;
+                    graph.refresh();
+                }
+
+            //graph.stylesheet.putCellStyle(this.responseText, style);
+            //model.setStyle(cellImage, this.responseText);
             //ritorniamo nell'immagine principale
             location.href = "#";
         }
