@@ -852,9 +852,7 @@ function addLabel(vertex, pos) {
     if (graphOrientation == 1) {
         x = 0;
         y = -0.25;
-    } else if (graphOrientation == 2) {
-
-    }
+    } 
 
     if (levelIsSetted[pos] == false) {
         var stringId = 'Level ' + (pos + 1);
