@@ -343,7 +343,7 @@ function personalStyleFunction() {
     }
 }
 
-//funzione per ripristinare il clore originario di un arco
+//funzione per ripristinare il clore originario di un arco OK
 function defaultEdgeStyle(newStyle) {
     var children = getAllChildren(graph.getDefaultParent().children[0]);
     if (children.length > 1) {
@@ -372,19 +372,21 @@ function changeStyle(callback) {
     }
 }
 
-//funzione per cambiare il colore del bordo di un singolo nodo
+//funzione per cambiare il colore del bordo di un singolo nodo OK
 function changeNodeStyle(value1, value2, value3) {
     graph.getModel().beginUpdate();
     try {
         var children = getAllChildren(graph.getDefaultParent().children[0]);
         var stylesheet;
         if (children != null) {
-            for (var i = 0; i < children.length; i++) {
-                stylesheet = children[i].style + ';' + ';gradientColor=' + value2 + ';' + ';fillColor=' + value3 + ';';
+            for (var i = 1; i < children.length; i++) {
+                var n = children[i].style.indexOf(";");
+                var nodeSubStyle = children[i].style.substring(0, n + 1);
+                stylesheet = nodeSubStyle + 'gradientColor=' + value2 + ';' + 'fillColor=' + value3 + ';';
                 if (children[i].myId == 0 || children[i].myId == 1) {
-                    children[i].style = stylesheet + ';strokeColor=' + value1;
+                    children[i].style = stylesheet + 'strokeColor=' + value1 + ';';
                 } else {
-                    children[i].style = stylesheet + ';strokeColor=' + value2;
+                    children[i].style = stylesheet + 'strokeColor=' + value2 + ';';
                 }
             }
         }
@@ -394,7 +396,7 @@ function changeNodeStyle(value1, value2, value3) {
     }
 }
 
-//funzione per cambiare il colore del contorno di un nodo
+//funzione per cambiare il colore del contorno di un nodo OK
 function changeBorderColor(cell, value1, value2, value3, value4) {
     var stylesheet = cell.style;
     if (graphStyle == 0) {
@@ -584,8 +586,19 @@ function createPopupMenu(editor, graph, menu, cell, _evt) {
                         if (controllInput(newStyle)) {
                             alert('Sono permesse solo lettere!');
                         } else {
-                            cell.style = stylesheet + ';gradientColor=' + newStyle + ';' + ';fillColor=' + newStyle + ';';
+                            console.log(cell.style);
+                            if (stylesheet.includes("strokeColor")) {
+                                var res = stylesheet.split(";");
+                                var strokeColor;
+                                for (var i = 0; i < res.length; i++) {
+                                    if (res[i].includes("strokeColor"))
+                                        strokeColor = res[i];
+                                }
+                                cell.style = res[0] + ';gradientColor=' + newStyle + ';' + 'fillColor=' + newStyle + ';' + strokeColor + ';';
+                            } else
+                                cell.style = stylesheet + 'gradientColor=' + newStyle + ';' + 'fillColor=' + newStyle + ';';
                             graph.refresh();
+                            console.log(cell.style);
                         }
                 }
             });
@@ -600,8 +613,13 @@ function createPopupMenu(editor, graph, menu, cell, _evt) {
                         if (controllInput(newStyle)) {
                             alert('Sono permesse solo lettere!');
                         } else {
-                            cell.style = stylesheet + ';strokeColor=' + newStyle + ';';
-                            graph.refresh();
+                            if (stylesheet.includes("strokeColor")) {
+                                console.log(stylesheet);
+                                var res = stylesheet.split("strokeColor=");
+                                cell.style = res[0] + 'strokeColor=' + newStyle + ';';
+                                graph.refresh();
+                                console.log(cell.style);
+                            }
                         }
                 }
             });
@@ -852,7 +870,7 @@ function addLabel(vertex, pos) {
     if (graphOrientation == 1) {
         x = 0;
         y = -0.25;
-    } 
+    }
 
     if (levelIsSetted[pos] == false) {
         var stringId = 'Level ' + (pos + 1);
