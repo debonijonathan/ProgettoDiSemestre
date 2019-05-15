@@ -111,7 +111,7 @@ function main(container) {
 
                 var parent = graph.getModel().getCell(graph.getSelectionCell().myparent);
 
-                if(parent.getId() != 1){
+                if (parent.getId() != 1) {
                     console.log(parent.getId());
                     addNode(graph, parent);
                 }
@@ -121,13 +121,13 @@ function main(container) {
         //Delete del nodo allo stesso livello di quello selezionato
         keyHandler.bindKey(46, function (_evt) {
             var parent = graph.getModel().getCell(graph.getSelectionCell().getId());
-            console.log(parent.style);
             if (graph.isEnabled()) {
                 if (graph.getSelectionCell().getId() != 2) {
                     if (parent.style == "note") {
                         graph.getModel().remove(parent);
-                    } else
+                    } else {
                         deleteNode(graph, parent);
+                    }
                 } else
                     alert("Non si può eliminare la root!");
             }
@@ -271,6 +271,8 @@ function thirdStyleFunction() {
     changeEdgeStyle('#000000');
 }
 
+//controllo dei parametri inseriti per i colori, controllando che siano soltanto lettere e 
+//non qualsiasi altro valore
 function checkColor(colorArray) {
     var cnt = 0;
     for (var i = 0; i < colorArray.length; i++) {
@@ -286,6 +288,9 @@ function checkColor(colorArray) {
     return false;
 }
 
+//funzione per impostare i parametri dello stile personale, a patto che il colore del nodo sia diverso da balck
+//se il colore dell'arco e/o quello del bordo del nodo non vengono specificati di default si applica il colore balck.
+//ritorna true se la scelta è valida, altrimenti false
 function insertPersonalStyle() {
     var values = mxUtils.prompt('Insert the values of node, border, edge color:', null);
     var res = values.split(", ");
@@ -434,7 +439,6 @@ function removeLabels(children) {
                 levelIsSetted[3] = false;
             }
         }
-
     return pos;
 }
 
@@ -887,7 +891,6 @@ function printAllNodeAt(altezza) {
 function deleteNode(graph, cell) {
     // Salvo tutti i nodi figli di cell
     var children = getAllChildren(cell);
-    console.log(changeBorderColor);
     // rimuovo tutti i figli
     graph.removeCells(children);
     //funzione per vedere quale label è stata cancellata e se è stata cancellata
@@ -929,14 +932,13 @@ function exportFileImage() {
             //style[mxConstants.STYLE_IMAGE] = this.responseText;
 
             var cell = graph.getSelectionCell();
-                if (cell != null) {
-                    var stylesheet = cell.style;
-                    var n = stylesheet.indexOf(";");
-                    var res = stylesheet.substring(n+1, stylesheet.length);
-                    console.log(res);
-                    cell.style = 'image='+this.responseText+';'+res;
-                    graph.refresh();
-                }
+            if (cell != null) {
+                var stylesheet = cell.style;
+                var n = stylesheet.indexOf(";");
+                var res = stylesheet.substring(n + 1, stylesheet.length);
+                cell.style = 'image=' + this.responseText + ';' + res;
+                graph.refresh();
+            }
 
             //graph.stylesheet.putCellStyle(this.responseText, style);
             //model.setStyle(cellImage, this.responseText);
