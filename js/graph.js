@@ -399,8 +399,6 @@ function changeNodeStyle(value1, value2, value3) {
 //funzione per cambiare il colore del contorno di un nodo OK
 function changeBorderColor(cell, value1, value2, value3, value4) {
     var stylesheet = cell.style;
-    console.log(style);
-    console.log(style.gradientColor);
     if (graphStyle == 0) {
         cell.style = stylesheet + ';gradientColor=' + style.gradientColor + ';' + 'fillColor=' + style.fillColor + ';strokeColor=' + value1 + ';';
     } else if (graphStyle == 1) {
@@ -410,7 +408,6 @@ function changeBorderColor(cell, value1, value2, value3, value4) {
     } else if (graphStyle == 3) {
         cell.style = stylesheet + ';gradientColor=' + style.gradientColor + ';' + 'fillColor=' + style.fillColor + ';strokeColor=' + value4 + ';';
     }
-    console.log(cell.style);
 }
 
 //funzione per il colore dei bordi dei nodi
@@ -811,7 +808,8 @@ function addNode(graph, cell) {
         graph.updateCellSize(vertex);
         createCell = vertex;
         //Inseriamo il collegamento tra il nodo parent e il nodo vertice
-        graph.insertEdge(parent, null, '', cell, vertex);
+        var s = 'strokeColor=' + edgeStyle.strokeColor + ';';
+        graph.insertEdge(parent, null, '', cell, vertex, s);
         //pulsante aggiungi nodo
         addFuntionButton(graph, vertex, true);
     }
