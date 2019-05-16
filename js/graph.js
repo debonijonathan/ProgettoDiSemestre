@@ -399,15 +399,18 @@ function changeNodeStyle(value1, value2, value3) {
 //funzione per cambiare il colore del contorno di un nodo OK
 function changeBorderColor(cell, value1, value2, value3, value4) {
     var stylesheet = cell.style;
+    console.log(style);
+    console.log(style.gradientColor);
     if (graphStyle == 0) {
-        cell.style = stylesheet + ';strokeColor=' + value1 + ';';
+        cell.style = stylesheet + ';gradientColor=' + style.gradientColor + ';' + 'fillColor=' + style.fillColor + ';strokeColor=' + value1 + ';';
     } else if (graphStyle == 1) {
-        cell.style = stylesheet + ';strokeColor=' + value2 + ';';
+        cell.style = stylesheet + ';gradientColor=' + style.gradientColor + ';' + 'fillColor=' + style.fillColor + ';strokeColor=' + value2 + ';';
     } else if (graphStyle == 2) {
-        cell.style = stylesheet + ';strokeColor=' + value3 + ';';
+        cell.style = stylesheet + ';gradientColor=' + style.gradientColor + ';' + 'fillColor=' + style.fillColor + ';strokeColor=' + value3 + ';';
     } else if (graphStyle == 3) {
-        cell.style = stylesheet + ';strokeColor=' + value4 + ';';
+        cell.style = stylesheet + ';gradientColor=' + style.gradientColor + ';' + 'fillColor=' + style.fillColor + ';strokeColor=' + value4 + ';';
     }
+    console.log(cell.style);
 }
 
 //funzione per il colore dei bordi dei nodi
